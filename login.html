@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — OpenClaw Marketplace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="claw-icon">⚡</div>
+    <span>OpenClaw</span>
+    <span class="raw">RAW</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/marketplace">Browse</a>
+    <a href="/publish">Publish</a>
+  </div>
+  <div class="nav-actions">
+    <div id="authNav"></div>
+    <button class="cart-btn" onclick="openCart()" aria-label="Cart">
+      🛒<span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<main class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="claw-icon" style="width:48px;height:48px;font-size:24px;">⚡</div>
+    </div>
+    <h1 class="auth-title">Sign in to OpenClaw</h1>
+    <p class="auth-sub">Access your purchased plugins and checkout faster.</p>
+    <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+      <div class="auth-field">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <div class="auth-error" id="loginError"></div>
+      <button type="submit" class="btn-primary auth-submit" id="loginBtn">Sign In</button>
+    </form>
+    <p class="auth-switch">Don't have an account? <a href="/signup">Sign up →</a></p>
+  </div>
+</main>
+
+<div class="toast" id="toast"><span class="toast-icon">✓</span><span id="toastMsg">Signed in</span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>
+async function handleLogin(e) {
+  e.preventDefault()
+  const btn = document.getElementById('loginBtn')
+  const errorEl = document.getElementById('loginError')
+  const email = document.getElementById('email').value.trim()
+  const password = document.getElementById('password').value
+  errorEl.textContent = ''
+  btn.textContent = 'Signing in...'
+  btn.disabled = true
+  try {
+    await signIn(email, password)
+    window.location.href = '/marketplace'
+  } catch (err) {
+    errorEl.textContent = err.message || 'Sign in failed. Please check your credentials.'
+    btn.textContent = 'Sign In'
+    btn.disabled = false
+  }
+}
+</script>
+</body>
+</html>

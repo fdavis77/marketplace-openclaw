@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — OpenClaw Marketplace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="claw-icon">⚡</div>
+    <span>OpenClaw</span>
+    <span class="raw">RAW</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/marketplace">Browse</a>
+    <a href="/publish">Publish</a>
+  </div>
+  <div class="nav-actions">
+    <div id="authNav"></div>
+    <button class="cart-btn" onclick="openCart()" aria-label="Cart">
+      🛒<span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<main class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="claw-icon" style="width:48px;height:48px;font-size:24px;">⚡</div>
+    </div>
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-sub">Join thousands of SMEs using OpenClaw plugins.</p>
+    <form class="auth-form" id="signupForm" onsubmit="handleSignup(event)">
+      <div class="auth-field">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" required autocomplete="new-password" minlength="6">
+      </div>
+      <div class="auth-field">
+        <label for="confirmPassword">Confirm password</label>
+        <input type="password" id="confirmPassword" placeholder="••••••••" required autocomplete="new-password">
+      </div>
+      <div class="auth-error" id="signupError"></div>
+      <div class="auth-success" id="signupSuccess" style="display:none;"></div>
+      <button type="submit" class="btn-primary auth-submit" id="signupBtn">Create Account</button>
+    </form>
+    <p class="auth-switch">Already have an account? <a href="/login">Sign in →</a></p>
+  </div>
+</main>
+
+<div class="toast" id="toast"><span class="toast-icon">✓</span><span id="toastMsg">Account created</span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>
+async function handleSignup(e) {
+  e.preventDefault()
+  const btn = document.getElementById('signupBtn')
+  const errorEl = document.getElementById('signupError')
+  const successEl = document.getElementById('signupSuccess')
+  const email = document.getElementById('email').value.trim()
+  const password = document.getElementById('password').value
+  const confirm = document.getElementById('confirmPassword').value
+  errorEl.textContent = ''
+  successEl.style.display = 'none'
+  if (password !== confirm) { errorEl.textContent = 'Passwords do not match.'; return }
+  btn.textContent = 'Creating account...'
+  btn.disabled = true
+  try {
+    await signUp(email, password)
+    document.getElementById('signupForm').style.display = 'none'
+    successEl.textContent = 'Check your email to confirm your account, then sign in.'
+    successEl.style.display = 'block'
+  } catch (err) {
+    errorEl.textContent = err.message || 'Sign up failed. Please try again.'
+    btn.textContent = 'Create Account'
+    btn.disabled = false
+  }
+}
+</script>
+</body>
+</html>

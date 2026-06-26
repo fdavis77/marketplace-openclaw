@@ -866,3 +866,76 @@ ul { list-style: none; }
   .sidebar-filters { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
   .marketplace-header, .marketplace-main { padding: 24px 20px; }
 }
+
+/* ─── AUTH PAGES ─────────────────────────────────────────── */
+.auth-page {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--deep);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 40px 36px;
+}
+.auth-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.auth-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+.auth-sub {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 32px;
+}
+.auth-form { display: flex; flex-direction: column; gap: 16px; }
+.auth-field { display: flex; flex-direction: column; gap: 6px; }
+.auth-field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+.auth-field input {
+  background: var(--slate);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--white);
+  transition: border-color 0.2s;
+  outline: none;
+}
+.auth-field input:focus { border-color: var(--indigo); }
+.auth-field input::placeholder { color: var(--muted); }
+.auth-error { font-size: 13px; color: var(--danger); min-height: 18px; }
+.auth-success {
+  font-size: 13px;
+  color: var(--lime);
+  background: rgba(200,255,0,0.08);
+  border: 1px solid rgba(200,255,0,0.2);
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  line-height: 1.5;
+}
+.auth-submit { width: 100%; padding: 12px; font-size: 15px; margin-top: 4px; }
+.auth-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.auth-switch { text-align: center; font-size: 13px; color: var(--muted); margin-top: 24px; }
+.auth-switch a { color: var(--indigo-l); }
+.auth-switch a:hover { text-decoration: underline; }
