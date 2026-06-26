@@ -3,8 +3,7 @@
   "name": "marketplace-openclaw-raw",
   "functions": {
     "api/webhook.js": {
-      "runtime": "nodejs20.x",
-      "bodyParser": false
+      "runtime": "nodejs20.x"
     },
     "api/create-checkout.js": {
       "runtime": "nodejs20.x"

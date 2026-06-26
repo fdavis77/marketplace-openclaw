@@ -1,4 +1,6 @@
 // api/webhook.js
+// Disable Vercel's body parser so we can read the raw body for Stripe signature verification
+export const config = { api: { bodyParser: false } }
 //
 // Troubleshooting: If webhook verification fails with
 // "No signatures found matching the expected signature",
