@@ -43,12 +43,13 @@ export default async function handler(req, res) {
 
   if (!userId || !pluginSlugs) {
     console.error('Missing metadata on session:', session.id)
-    return res.status(400).json({ error: 'Missing session metadata' })
+    return res.status(200).json({ received: true })
   }
 
   let slugs
-  try { slugs = JSON.parse(pluginSlugs) } catch {
-    return res.status(400).json({ error: 'Invalid pluginSlugs metadata' })
+  try { slugs = JSON.parse(pluginSlugs) } catch (err) {
+    console.error('Invalid pluginSlugs JSON for session:', session.id, err.message)
+    return res.status(200).json({ received: true })
   }
 
   const { data: plugins, error: dbError } = await supabaseAdmin
@@ -58,7 +59,7 @@ export default async function handler(req, res) {
 
   if (dbError || !plugins) {
     console.error('DB lookup failed:', dbError)
-    return res.status(500).json({ error: 'Failed to look up plugins' })
+    return res.status(200).json({ received: true })
   }
 
   for (const slug of slugs) {
