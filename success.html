@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Confirmed — OpenClaw Marketplace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="claw-icon">⚡</div>
+    <span>OpenClaw</span>
+    <span class="raw">RAW</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/marketplace">Browse</a>
+    <a href="/publish">Publish</a>
+  </div>
+  <div class="nav-actions">
+    <div id="authNav"></div>
+    <button class="cart-btn" onclick="openCart()" aria-label="Cart">
+      🛒<span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<main class="auth-page">
+  <div class="auth-card" style="text-align:center;">
+    <div style="font-size:56px;margin-bottom:24px;">✅</div>
+    <h1 class="auth-title">Payment confirmed</h1>
+    <p class="auth-sub" style="margin-bottom:32px;">
+      Your purchase was successful. Secure downloads will be available
+      in My Library once file delivery is enabled in the next update.
+    </p>
+    <a href="/marketplace" class="btn-primary" style="display:inline-block;">Back to Marketplace →</a>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    localStorage.removeItem('ocr_cart')
+    updateCartUI()
+  })
+</script>
+</body>
+</html>

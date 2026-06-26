@@ -329,12 +329,41 @@ function closeCart() {
 }
 
 // ── CHECKOUT ──────────────────────────────────────────────
-function checkout() {
-  if (cart.length === 0) return;
-  showToast('🔒 Redirecting to secure checkout...');
-  setTimeout(() => {
-    alert('Stripe checkout integration coming soon.\n\nThis is where payment processing will be connected.');
-  }, 800);
+async function checkout() {
+  if (cart.length === 0) return
+
+  const user = await getUser()
+  if (!user) {
+    window.location.href = '/login?next=checkout'
+    return
+  }
+
+  const paidItems = cart.filter(item => item.price > 0)
+  if (paidItems.length === 0) {
+    showToast('No paid items — free plugin claiming coming soon')
+    return
+  }
+
+  showToast('🔒 Redirecting to secure checkout...')
+
+  try {
+    const res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: paidItems, userId: user.id }),
+    })
+
+    const data = await res.json()
+
+    if (!res.ok) {
+      showToast(`Checkout error: ${data.error || 'Something went wrong'}`)
+      return
+    }
+
+    window.location.href = data.url
+  } catch {
+    showToast('Network error. Please try again.')
+  }
 }
 
 // ── TOAST ─────────────────────────────────────────────────
