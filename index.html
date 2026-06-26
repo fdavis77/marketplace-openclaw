@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace — OpenClaw Raw</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="claw-icon">⚡</div>
+    <span>OpenClaw</span>
+    <span class="raw">RAW</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="marketplace.html">Browse</a>
+    <a href="#how-it-works">How it Works</a>
+    <a href="publish.html">Publish</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-ghost" onclick="openCart()">Sign In</button>
+    <button class="btn-primary" onclick="window.location='marketplace.html'">Browse Plugins</button>
+    <button class="cart-btn" onclick="openCart()" aria-label="Cart">
+      🛒
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-pulse">
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+  </div>
+  <p class="hero-eyebrow">The OpenClaw Plugin Marketplace</p>
+  <h1>Skills & Plugins for<br><em>Agentic AI</em> that works</h1>
+  <p class="hero-sub">Find, buy, and install ready-made plugins and skills for OpenClaw. Built for small businesses who want AI that gets things done — without the technical overhead.</p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="window.location='marketplace.html'">Browse All Plugins →</button>
+    <button class="btn-ghost" onclick="window.location='publish.html'">Sell Your Plugin</button>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num" id="statPlugins">48</div>
+      <div class="stat-label">Plugins Available</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statSellers">12</div>
+      <div class="stat-label">Verified Sellers</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statInstalls">2.1k</div>
+      <div class="stat-label">Total Installs</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">Free</div>
+      <div class="stat-label">To Browse</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURED ── -->
+<section class="section">
+  <div class="featured-banner">
+    <div>
+      <p class="featured-label">⚡ Featured Plugin</p>
+      <h2 class="featured-title">Hunter Gatherer</h2>
+      <p class="featured-desc">Let OpenClaw autonomously scrape the web for market research. Competitor pricing, trend signals, social proof — all collected and structured without lifting a finger.</p>
+      <div class="plugin-tags" style="margin-top:16px;">
+        <span class="tag">Market Research</span>
+        <span class="tag">Web Scraping</span>
+        <span class="tag">SME</span>
+        <span class="tag">Agentic</span>
+      </div>
+    </div>
+    <div class="featured-price">
+      <div class="amount"><span class="currency">£</span>9</div>
+      <div class="period">One-time purchase</div>
+      <button class="btn-primary" onclick="addToCart('hunter-gatherer', 'Hunter Gatherer', 9, '🕷️', 'bg-indigo')">Add to Cart</button>
+    </div>
+  </div>
+
+  <!-- NEW ARRIVALS -->
+  <div class="section-header">
+    <h2 class="section-title">New <span>Arrivals</span></h2>
+    <a href="marketplace.html" class="see-all">See all plugins →</a>
+  </div>
+
+  <div class="search-bar-wrap">
+    <div class="search-bar">
+      <input type="text" placeholder="Search plugins, skills, tools..." id="heroSearch">
+      <button class="search-btn" onclick="goSearch()">Search</button>
+    </div>
+  </div>
+
+  <div class="categories" id="homeCategories">
+    <button class="cat-pill active" data-cat="all">All</button>
+    <button class="cat-pill" data-cat="research">Research</button>
+    <button class="cat-pill" data-cat="marketing">Marketing</button>
+    <button class="cat-pill" data-cat="video">Video & Content</button>
+    <button class="cat-pill" data-cat="automation">Automation</button>
+    <button class="cat-pill" data-cat="finance">Finance</button>
+    <button class="cat-pill" data-cat="social">Social Media</button>
+  </div>
+
+  <div class="plugins-grid" id="pluginsGrid">
+    <!-- Populated by JS -->
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="section how-it-works" id="how-it-works">
+  <h2 class="section-title" style="text-align:center;">How it <span>Works</span></h2>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Browse the Marketplace</div>
+      <p class="step-desc">Explore plugins and skills built specifically for OpenClaw users. Filter by category, price, or use case.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Buy Instantly</div>
+      <p class="step-desc">One-time purchases from £2. No subscriptions, no lock-in. You own what you buy.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Install in OpenClaw</div>
+      <p class="step-desc">Download your plugin file and drop it into your OpenClaw setup. Full install guide included with every purchase.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Let the Agent Work</div>
+      <p class="step-desc">OpenClaw takes over. Your new skill runs autonomously — scraping, building, posting, researching — while you focus elsewhere.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── SELL YOUR PLUGIN ── -->
+<section class="section">
+  <div class="sell-banner">
+    <h2>Got a plugin idea?<br>Sell it here.</h2>
+    <p>Reach thousands of OpenClaw users. List your plugin in minutes, set your own price, and earn on every sale. We handle payments.</p>
+    <button class="btn-primary" onclick="window.location='publish.html'">Start Selling Free →</button>
+    <div class="sell-features">
+      <div class="sell-feature"><span class="check">✓</span> Free to list</div>
+      <div class="sell-feature"><span class="check">✓</span> You set the price</div>
+      <div class="sell-feature"><span class="check">✓</span> 80% revenue share</div>
+      <div class="sell-feature"><span class="check">✓</span> Instant payouts via Stripe</div>
+      <div class="sell-feature"><span class="check">✓</span> Built-in analytics</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="nav-logo" style="margin-bottom:0">
+        <div class="claw-icon">⚡</div>
+        <span>OpenClaw</span>
+        <span class="raw">RAW</span>
+      </div>
+      <p>The open marketplace for OpenClaw plugins, skills, and agentic AI tools. Built for SMEs who want results.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Marketplace</h4>
+      <a href="marketplace.html">Browse All</a>
+      <a href="marketplace.html?cat=marketing">Marketing</a>
+      <a href="marketplace.html?cat=research">Research</a>
+      <a href="marketplace.html?cat=video">Video & Content</a>
+    </div>
+    <div class="footer-col">
+      <h4>Sellers</h4>
+      <a href="publish.html">Publish a Plugin</a>
+      <a href="#">Seller Guide</a>
+      <a href="#">Pricing</a>
+      <a href="#">Seller Dashboard</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#">About</a>
+      <a href="#">Blog</a>
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Marketplace OpenClaw Raw. All rights reserved.</span>
+    <div class="apps-on-ai-badge">
+      A product by <span>Apps on AI</span> · Zenith Global Holdings Ltd
+    </div>
+  </div>
+</footer>
+
+<!-- ── CART SIDEBAR ── -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>Your Cart</h3>
+    <button class="close-cart" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <div class="empty-icon">🛒</div>
+      <span>Your cart is empty</span>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-total">
+      <span>Total</span>
+      <span class="total-amount" id="cartTotal">£0.00</span>
+    </div>
+    <button class="btn-primary" onclick="checkout()">Checkout →</button>
+    <button class="btn-ghost" onclick="closeCart()">Continue Browsing</button>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✓</span>
+  <span id="toastMsg">Added to cart</span>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

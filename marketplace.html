@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Plugins — OpenClaw Raw</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="claw-icon">⚡</div>
+    <span>OpenClaw</span>
+    <span class="raw">RAW</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="marketplace.html" class="active">Browse</a>
+    <a href="index.html#how-it-works">How it Works</a>
+    <a href="publish.html">Publish</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-ghost">Sign In</button>
+    <button class="btn-primary" onclick="window.location='publish.html'">Sell a Plugin</button>
+    <button class="cart-btn" onclick="openCart()" aria-label="Cart">
+      🛒
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ── MARKETPLACE HEADER ── -->
+<div class="marketplace-header">
+  <h1>Browse Plugins & Skills</h1>
+  <p>Ready-made OpenClaw extensions to power your business</p>
+  <div class="search-bar-wrap" style="margin: 20px 0 0;">
+    <div class="search-bar">
+      <input type="text" placeholder="Search plugins, skills, categories..." id="searchInput" oninput="filterPlugins()">
+      <button class="search-btn">Search</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── LAYOUT ── -->
+<div class="marketplace-layout">
+
+  <!-- SIDEBAR FILTERS -->
+  <aside class="sidebar-filters">
+    <div class="filter-group">
+      <div class="filter-label">Category</div>
+      <label class="filter-option"><input type="checkbox" value="research" onchange="filterPlugins()"> Research</label>
+      <label class="filter-option"><input type="checkbox" value="marketing" onchange="filterPlugins()"> Marketing</label>
+      <label class="filter-option"><input type="checkbox" value="video" onchange="filterPlugins()"> Video & Content</label>
+      <label class="filter-option"><input type="checkbox" value="automation" onchange="filterPlugins()"> Automation</label>
+      <label class="filter-option"><input type="checkbox" value="finance" onchange="filterPlugins()"> Finance</label>
+      <label class="filter-option"><input type="checkbox" value="social" onchange="filterPlugins()"> Social Media</label>
+      <label class="filter-option"><input type="checkbox" value="ecommerce" onchange="filterPlugins()"> E-Commerce</label>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">Price</div>
+      <label class="filter-option"><input type="checkbox" value="free" onchange="filterPlugins()"> Free</label>
+      <label class="filter-option"><input type="checkbox" value="paid" onchange="filterPlugins()"> Paid</label>
+      <div class="price-range" style="margin-top:12px;">
+        <input type="range" min="0" max="50" value="50" id="maxPrice" oninput="updatePriceLabel(); filterPlugins()">
+        <div class="price-range-labels">
+          <span>£0</span>
+          <span id="priceLabel">Up to £50</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">Publisher</div>
+      <label class="filter-option"><input type="checkbox" value="appsOnAI" onchange="filterPlugins()"> Apps on AI</label>
+      <label class="filter-option"><input type="checkbox" value="community" onchange="filterPlugins()"> Community</label>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">Rating</div>
+      <label class="filter-option"><input type="checkbox" value="5" onchange="filterPlugins()"> ⭐⭐⭐⭐⭐ 5 stars</label>
+      <label class="filter-option"><input type="checkbox" value="4" onchange="filterPlugins()"> ⭐⭐⭐⭐+ 4 & up</label>
+      <label class="filter-option"><input type="checkbox" value="3" onchange="filterPlugins()"> ⭐⭐⭐+ 3 & up</label>
+    </div>
+
+    <button class="btn-ghost" onclick="clearFilters()" style="width:100%; text-align:center; margin-top:8px; font-size:13px;">Clear Filters</button>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="marketplace-main">
+    <div class="categories" id="marketplaceCategories">
+      <button class="cat-pill active" data-cat="all" onclick="setCat(this, 'all')">All</button>
+      <button class="cat-pill" data-cat="research" onclick="setCat(this, 'research')">Research</button>
+      <button class="cat-pill" data-cat="marketing" onclick="setCat(this, 'marketing')">Marketing</button>
+      <button class="cat-pill" data-cat="video" onclick="setCat(this, 'video')">Video & Content</button>
+      <button class="cat-pill" data-cat="automation" onclick="setCat(this, 'automation')">Automation</button>
+      <button class="cat-pill" data-cat="social" onclick="setCat(this, 'social')">Social Media</button>
+      <button class="cat-pill" data-cat="finance" onclick="setCat(this, 'finance')">Finance</button>
+    </div>
+
+    <div class="marketplace-toolbar">
+      <span class="results-count" id="resultsCount">Showing all plugins</span>
+      <select class="sort-select" id="sortSelect" onchange="filterPlugins()">
+        <option value="featured">Featured</option>
+        <option value="newest">Newest First</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating">Top Rated</option>
+      </select>
+    </div>
+
+    <div class="plugins-grid" id="pluginsGrid">
+      <!-- Populated by JS -->
+    </div>
+  </main>
+</div>
+
+<!-- ── CART SIDEBAR ── -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>Your Cart</h3>
+    <button class="close-cart" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <div class="empty-icon">🛒</div>
+      <span>Your cart is empty</span>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-total">
+      <span>Total</span>
+      <span class="total-amount" id="cartTotal">£0.00</span>
+    </div>
+    <button class="btn-primary" onclick="checkout()">Checkout →</button>
+    <button class="btn-ghost" onclick="closeCart()">Continue Browsing</button>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✓</span>
+  <span id="toastMsg">Added to cart</span>
+</div>
+
+<script src="app.js"></script>
+<script>
+  // Marketplace page init — show all, enable filters
+  document.addEventListener('DOMContentLoaded', () => {
+    renderPlugins(PLUGINS);
+    // Check for URL param category
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get('cat');
+    if (cat) {
+      const btn = document.querySelector(`[data-cat="${cat}"]`);
+      if (btn) setCat(btn, cat);
+    }
+  });
+
+  let activeCat = 'all';
+  function setCat(btn, cat) {
+    activeCat = cat;
+    document.querySelectorAll('#marketplaceCategories .cat-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterPlugins();
+  }
+
+  function updatePriceLabel() {
+    const val = document.getElementById('maxPrice').value;
+    document.getElementById('priceLabel').textContent = val == 50 ? 'Any price' : `Up to £${val}`;
+  }
+
+  function clearFilters() {
+    document.querySelectorAll('.sidebar-filters input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.getElementById('maxPrice').value = 50;
+    updatePriceLabel();
+    document.getElementById('searchInput').value = '';
+    activeCat = 'all';
+    document.querySelectorAll('#marketplaceCategories .cat-pill').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-cat="all"]').classList.add('active');
+    filterPlugins();
+  }
+
+  function filterPlugins() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const maxPrice = parseInt(document.getElementById('maxPrice').value);
+    const sort = document.getElementById('sortSelect').value;
+    const checkedCats = [...document.querySelectorAll('.sidebar-filters input[type="checkbox"][value]:not([value="free"]):not([value="paid"]):not([value="appsOnAI"]):not([value="community"]):not([value="3"]):not([value="4"]):not([value="5"])')]
+      .filter(cb => cb.checked).map(cb => cb.value);
+    const showFree = document.querySelector('input[value="free"]')?.checked;
+    const showPaid = document.querySelector('input[value="paid"]')?.checked;
+
+    let filtered = PLUGINS.filter(p => {
+      const matchSearch = !search || p.name.toLowerCase().includes(search) || p.desc.toLowerCase().includes(search) || p.tags.some(t => t.toLowerCase().includes(search));
+      const matchCat = activeCat === 'all' || p.cat === activeCat;
+      const matchCheckedCat = checkedCats.length === 0 || checkedCats.includes(p.cat);
+      const matchPrice = p.price <= maxPrice;
+      const matchFreeOrPaid = (!showFree && !showPaid) || (showFree && p.price === 0) || (showPaid && p.price > 0);
+      return matchSearch && matchCat && matchCheckedCat && matchPrice && matchFreeOrPaid;
+    });
+
+    if (sort === 'price-asc') filtered.sort((a,b) => a.price - b.price);
+    if (sort === 'price-desc') filtered.sort((a,b) => b.price - a.price);
+    if (sort === 'rating') filtered.sort((a,b) => b.rating - a.rating);
+    if (sort === 'newest') filtered.reverse();
+
+    document.getElementById('resultsCount').textContent = `Showing ${filtered.length} plugin${filtered.length !== 1 ? 's' : ''}`;
+    renderPlugins(filtered);
+  }
+</script>
+</body>
+</html>
