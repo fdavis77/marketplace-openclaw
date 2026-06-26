@@ -9,7 +9,8 @@
     { "src": "api/*.js", "use": "@vercel/node" }
   ],
   "functions": {
-    "api/*.js": { "runtime": "nodejs20.x" }
+    "api/*.js": { "runtime": "nodejs20.x" },
+    "api/webhook.js": { "runtime": "nodejs20.x", "bodyParser": false }
   },
   "routes": [
     { "src": "/api/create-checkout", "dest": "/api/create-checkout.js" },
