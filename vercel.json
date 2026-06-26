@@ -1,16 +1,14 @@
 {
   "version": 2,
   "name": "marketplace-openclaw-raw",
-  "builds": [
-    { "src": "*.html", "use": "@vercel/static" },
-    { "src": "*.css", "use": "@vercel/static" },
-    { "src": "app.js", "use": "@vercel/static" },
-    { "src": "auth.js", "use": "@vercel/static" },
-    { "src": "api/*.js", "use": "@vercel/node" }
-  ],
   "functions": {
-    "api/*.js": { "runtime": "nodejs20.x" },
-    "api/webhook.js": { "runtime": "nodejs20.x", "bodyParser": false }
+    "api/webhook.js": {
+      "runtime": "nodejs20.x",
+      "bodyParser": false
+    },
+    "api/create-checkout.js": {
+      "runtime": "nodejs20.x"
+    }
   },
   "routes": [
     { "src": "/api/create-checkout", "dest": "/api/create-checkout.js" },

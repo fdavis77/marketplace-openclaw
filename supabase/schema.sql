@@ -30,11 +30,13 @@ CREATE TABLE purchases (
   id                UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id           UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   plugin_id         UUID REFERENCES plugins(id),
-  stripe_session_id TEXT UNIQUE NOT NULL,
+  stripe_session_id TEXT NOT NULL,
   amount_paid       DECIMAL(10,2),
   currency          TEXT DEFAULT 'gbp',
   created_at        TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE purchases ADD CONSTRAINT purchases_session_plugin_unique UNIQUE (stripe_session_id, plugin_id);
 
 -- Create reviews table
 CREATE TABLE reviews (

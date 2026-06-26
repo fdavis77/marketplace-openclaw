@@ -54,7 +54,7 @@ export default async function handler(req, res) {
 
   const { data: plugins, error: dbError } = await supabaseAdmin
     .from('plugins')
-    .select('id, slug')
+    .select('id, slug, price')
     .in('slug', slugs)
 
   if (dbError || !plugins) {
@@ -72,7 +72,7 @@ export default async function handler(req, res) {
         user_id: userId,
         plugin_id: plugin.id,
         stripe_session_id: session.id,
-        amount_paid: session.amount_total / 100,
+        amount_paid: Number(plugin.price),
         currency: session.currency,
       })
 
