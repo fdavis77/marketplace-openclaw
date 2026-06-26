@@ -40,9 +40,10 @@ async function updateAuthNav() {
 
   if (user) {
     authNav.innerHTML = `
-      <span style="font-size:12px;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${user.email}</span>
+      <span id="navEmail" style="font-size:12px;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
       <button class="btn-ghost" onclick="doSignOut()" style="font-size:12px;padding:6px 12px;">Sign Out</button>
     `
+    document.getElementById('navEmail').textContent = user.email
   } else {
     authNav.innerHTML = `
       <a href="/login" class="btn-ghost" style="font-size:13px;padding:6px 14px;display:inline-block;">Sign In</a>
