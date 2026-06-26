@@ -211,7 +211,7 @@
     <a href="publish.html" class="active">Publish</a>
   </div>
   <div class="nav-actions">
-    <button class="btn-ghost">Sign In</button>
+    <div id="authNav"></div>
     <button class="btn-primary">Get Started</button>
     <button class="cart-btn" onclick="openCart()" aria-label="Cart">
       🛒
@@ -414,6 +414,8 @@
   <span id="toastMsg">Added to cart</span>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
 <script src="app.js"></script>
 <script>
   function updateCalc() {
