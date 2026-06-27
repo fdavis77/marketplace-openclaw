@@ -1,14 +1,6 @@
 {
   "version": 2,
   "name": "marketplace-openclaw-raw",
-  "functions": {
-    "api/webhook.js": {
-      "runtime": "node@20"
-    },
-    "api/create-checkout.js": {
-      "runtime": "node@20"
-    }
-  },
   "routes": [
     { "src": "/api/create-checkout", "dest": "/api/create-checkout.js" },
     { "src": "/api/webhook", "dest": "/api/webhook.js" },
