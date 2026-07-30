@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette — deep ink-navy base, aged brass accent, warm linen surface, rare bottle-green tertiary */
+  --color-navy: #0b1e2d;
+  --color-navy-light: #142f45;
+  --color-navy-dark: #06121c;
+  --color-brass: #b8935f;
+  --color-brass-light: #d1b48a;
+  --color-brass-dark: #8f6f43;
+  --color-linen: #f7f5f1;
+  --color-linen-dark: #ece7dd;
+  --color-bottle: #1d3b32;
+  --color-ink: #0b1e2d;
+
+  --font-display: "Rokkitt", "Georgia", serif;
+  --font-body: "Public Sans", "Segoe UI", sans-serif;
+
+  --animate-draw-route: draw-route 2.2s ease-out forwards;
+}
+
+@keyframes draw-route {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    @apply bg-linen text-navy font-body antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+
+  /* Visible keyboard focus states everywhere */
+  :focus-visible {
+    outline: 2px solid var(--color-brass);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
