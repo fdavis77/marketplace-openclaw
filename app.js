@@ -185,6 +185,21 @@ const PLUGINS = [
     icon: '🛍️',
     iconBg: 'background: linear-gradient(135deg, #6D28D9, #C4B5FD)',
   },
+  {
+    id: 'call-e',
+    name: 'CALL-E',
+    author: 'Axom AI',
+    authorType: 'community',
+    desc: 'A voice agent that rescues missed calls and confirms bookings for restaurants and venues — verifies arrival time, party size, and dietary notices, then escalates anything outside its authority to your team.',
+    cat: 'automation',
+    tags: ['Hospitality', 'Voice AI', 'Bookings', 'Restaurants'],
+    price: 15,
+    rating: 4.8,
+    reviews: 9,
+    badge: 'new',
+    icon: '📞',
+    iconBg: 'background: linear-gradient(135deg, #B91C1C, #F87171)',
+  },
 ];
 
 // ── CART STATE ────────────────────────────────────────────
