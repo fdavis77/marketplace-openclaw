@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fbf7ef;
+  --surface: #ffffff;
+  --foreground: #221a12;
+  --muted: #6b6154;
+  --muted-surface: #f1e9db;
+  --border: #e6dbc8;
+  --accent: #b4530a;
+  --accent-foreground: #fffaf0;
+  --accent-soft: #f6e3c6;
+  --radius: 1rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-surface: var(--muted-surface);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --radius-card: var(--radius);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* A rare, deliberate texture accent for section dividers — never used as a
+   full-page background. */
+.grain-divider {
+  height: 3px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--border) 0px,
+    var(--border) 6px,
+    transparent 6px,
+    transparent 14px
+  );
+}
