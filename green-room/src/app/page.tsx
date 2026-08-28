@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { relativeDays, formatDate, formatDateTime } from "@/lib/format";
+import { ROLE_LABELS, WRITER_ADJACENT_ROLES } from "@/lib/roles";
 
 type UpcomingItem = {
   id: string;
@@ -41,13 +42,13 @@ export default async function HomePage() {
           Built by <Link href="/about" className="font-medium text-accent hover:underline">Aysha Scott</Link>,
           independent filmmaker and founder of Filmmaking Planner.
         </p>
-        <div className="mx-auto mt-6 grid max-w-2xl gap-4 text-left sm:grid-cols-2">
+        <div className="mx-auto mt-6 grid max-w-4xl gap-4 text-left sm:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader>
               <Badge variant="outline">Writers & directors</Badge>
-              <CardTitle className="text-base">Projects, scenes, submissions, goals</CardTitle>
+              <CardTitle className="text-base">Projects, beats, submissions, goals</CardTitle>
               <CardDescription>
-                Every script as a project with a stage pipeline, a scene-by-scene revision tracker, where
+                Every script as a project with a stage pipeline, a screenwriting beat sheet, where
                 it&rsquo;s been submitted, and a daily or weekly writing target.
               </CardDescription>
             </CardHeader>
@@ -62,6 +63,16 @@ export default async function HomePage() {
               </CardDescription>
             </CardHeader>
           </Card>
+          <Card>
+            <CardHeader>
+              <Badge variant="accent2">90-day challenge</Badge>
+              <CardTitle className="text-base">Make a short film in 90 days</CardTitle>
+              <CardDescription>
+                A guided, phase-by-phase milestone plan on any project, plus an opt-in industry
+                directory to find your crew — gaffers, composers, sound, and more.
+              </CardDescription>
+            </CardHeader>
+          </Card>
         </div>
       </div>
     );
@@ -69,11 +80,7 @@ export default async function HomePage() {
 
   const supabase = await createClient();
   const roles = profile.creative_roles ?? [];
-  const isWriter =
-    roles.includes("writer") ||
-    roles.includes("director") ||
-    roles.includes("producer") ||
-    roles.includes("editor");
+  const isWriter = roles.some((r) => WRITER_ADJACENT_ROLES.includes(r));
   const isActor = roles.includes("actor");
 
   const [{ data: projects }, { data: auditions }] = await Promise.all([
@@ -156,14 +163,6 @@ export default async function HomePage() {
 
   upcoming.sort((a, b) => new Date(a.when).getTime() - new Date(b.when).getTime());
 
-  const roleLabels: Record<string, string> = {
-    writer: "Writer",
-    director: "Director",
-    producer: "Producer",
-    editor: "Editor",
-    actor: "Actor",
-  };
-
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <h1 className="font-display text-3xl">Morning, {profile.display_name.split(" ")[0]}.</h1>
@@ -172,7 +171,7 @@ export default async function HomePage() {
       {roles.length ? (
         <div className="mt-4 flex flex-wrap gap-2">
           {roles.map((r) => (
-            <Badge key={r} variant="solid">{roleLabels[r] ?? r}</Badge>
+            <Badge key={r} variant="solid">{ROLE_LABELS[r] ?? r}</Badge>
           ))}
         </div>
       ) : null}

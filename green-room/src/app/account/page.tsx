@@ -8,7 +8,9 @@ export default async function AccountPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
       <h1 className="font-display text-3xl">Account</h1>
-      <p className="mt-2 text-muted">Private to you — nothing here is shown to anyone else.</p>
+      <p className="mt-2 text-muted">
+        Private to you by default — the network directory below is the one exception, and it&rsquo;s opt-in.
+      </p>
 
       <Card className="mt-8">
         <CardHeader>

@@ -4,13 +4,14 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { ROLE_OPTIONS } from "@/lib/roles";
 
 export type FormState = { error?: string; sent?: boolean } | undefined;
 
 const emailSchema = z.email();
 const passwordSchema = z.string().min(8, "Password must be at least 8 characters.");
 
-const roleEnum = z.enum(["writer", "director", "producer", "editor", "actor"]);
+const roleEnum = z.enum(ROLE_OPTIONS.map((r) => r.value) as [string, ...string[]]);
 
 const signupSchema = z.object({
   displayName: z.string().trim().min(2, "Name must be at least 2 characters.").max(80),

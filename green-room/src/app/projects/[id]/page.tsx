@@ -11,6 +11,8 @@ import {
   updateSubmission,
   deleteSubmission,
 } from "@/app/actions/projects";
+import { startChallenge, toggleMilestone } from "@/app/actions/challenge";
+import { generateBeatSheet, toggleBeat } from "@/app/actions/beats";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -43,10 +45,21 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     .maybeSingle();
   if (!project) notFound();
 
-  const [{ data: scenes }, { data: submissions }] = await Promise.all([
+  const [{ data: scenes }, { data: submissions }, { data: milestones }, { data: beats }] = await Promise.all([
     supabase.from("scenes").select("*").eq("project_id", id).order("scene_number", { ascending: true }),
     supabase.from("submissions").select("*").eq("project_id", id).order("submitted_at", { ascending: false }),
+    supabase.from("challenge_milestones").select("*").eq("project_id", id).order("day_number", { ascending: true }),
+    supabase.from("story_beats").select("*").eq("project_id", id).order("position", { ascending: true }),
   ]);
+
+  const now = new Date();
+  const challengeDay = project.challenge_started_at
+    ? Math.min(
+        90,
+        Math.max(1, Math.floor((now.getTime() - new Date(project.challenge_started_at).getTime()) / 86400000) + 1)
+      )
+    : null;
+  const milestonesDone = (milestones ?? []).filter((m) => m.is_done).length;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
@@ -89,6 +102,99 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <Button type="submit" size="sm" className="sm:col-span-2 self-start">Save changes</Button>
         </form>
       </details>
+
+      <section className="mt-10">
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-xl">90-day challenge</h2>
+          {challengeDay ? (
+            <Badge variant="accent2">Day {challengeDay} of 90</Badge>
+          ) : null}
+        </div>
+
+        {!project.challenge_started_at ? (
+          <div className="mt-3 flex items-center justify-between gap-4 rounded-card bg-surface p-4">
+            <p className="text-sm text-muted">
+              Start a guided, phase-by-phase plan to take this project from idea to a finished short
+              film in 90 days.
+            </p>
+            <form action={startChallenge}>
+              <input type="hidden" name="projectId" value={project.id} />
+              <Button type="submit" size="sm">Start the challenge</Button>
+            </form>
+          </div>
+        ) : (
+          <div className="mt-3 flex flex-col gap-4">
+            <div className="flex h-2 gap-0.5 overflow-hidden rounded-full bg-[var(--color-neutral-300)]">
+              <div
+                className="h-full bg-accent-2"
+                style={{ width: `${(milestonesDone / Math.max(1, milestones?.length ?? 1)) * 100}%` }}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              {milestones?.map((m) => (
+                <form key={m.id} action={toggleMilestone} className="flex items-center gap-3 rounded-card bg-surface p-3">
+                  <input type="hidden" name="id" value={m.id} />
+                  <input type="hidden" name="projectId" value={project.id} />
+                  <input type="hidden" name="isDone" value={(!m.is_done).toString()} />
+                  <button
+                    type="submit"
+                    aria-label={m.is_done ? "Mark not done" : "Mark done"}
+                    className={`grid h-6 w-6 flex-none place-items-center rounded-full text-xs font-bold ${
+                      m.is_done ? "bg-accent-2 text-accent-2-foreground" : "border-2 border-dashed border-[var(--color-neutral-400)]"
+                    }`}
+                  >
+                    {m.is_done ? "✓" : ""}
+                  </button>
+                  <div className="flex flex-1 flex-col">
+                    <span className={`text-sm font-medium ${m.is_done ? "text-muted line-through" : ""}`}>{m.title}</span>
+                    <span className="text-xs text-muted">Day {m.day_number} · {m.phase}{m.description ? ` — ${m.description}` : ""}</span>
+                  </div>
+                </form>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="mt-10">
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-xl">Screenwriting beat sheet</h2>
+          <Badge variant="outline">{beats?.length ?? 0}</Badge>
+        </div>
+
+        {!beats?.length ? (
+          <div className="mt-3 flex items-center justify-between gap-4 rounded-card bg-surface p-4">
+            <p className="text-sm text-muted">Generate a starter beat sheet to plan your structure.</p>
+            <form action={generateBeatSheet}>
+              <input type="hidden" name="projectId" value={project.id} />
+              <Button type="submit" size="sm">Generate beat sheet</Button>
+            </form>
+          </div>
+        ) : (
+          <div className="mt-3 flex flex-col gap-2">
+            {beats.map((beat) => (
+              <form key={beat.id} action={toggleBeat} className="flex items-start gap-3 rounded-card bg-surface p-3">
+                <input type="hidden" name="id" value={beat.id} />
+                <input type="hidden" name="projectId" value={project.id} />
+                <input type="hidden" name="isDone" value={(!beat.is_done).toString()} />
+                <button
+                  type="submit"
+                  aria-label={beat.is_done ? "Mark not done" : "Mark done"}
+                  className={`mt-0.5 grid h-6 w-6 flex-none place-items-center rounded-full text-xs font-bold ${
+                    beat.is_done ? "bg-accent-2 text-accent-2-foreground" : "border-2 border-dashed border-[var(--color-neutral-400)]"
+                  }`}
+                >
+                  {beat.is_done ? "✓" : ""}
+                </button>
+                <div className="flex flex-1 flex-col">
+                  <span className={`text-sm font-medium ${beat.is_done ? "text-muted line-through" : ""}`}>{beat.title}</span>
+                  {beat.description ? <span className="text-xs text-muted">{beat.description}</span> : null}
+                </div>
+              </form>
+            ))}
+          </div>
+        )}
+      </section>
 
       <section className="mt-10">
         <div className="flex items-center justify-between">

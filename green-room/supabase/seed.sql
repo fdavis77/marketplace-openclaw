@@ -174,3 +174,82 @@ insert into public.availability_blocks (owner_id, start_date, end_date, reason)
 values
   ((select id from auth.users where email = 'tom.okafor@example.com'), current_date + 14, current_date + 21, 'Booked — corporate video shoot'),
   ((select id from auth.users where email = 'lena.brandt@example.com'), current_date + 5, current_date + 8, 'Unavailable — family commitment');
+
+-- ---------------------------------------------------------------------------
+-- 90-day challenge, beat sheet, network directory + a demo conversation
+-- ---------------------------------------------------------------------------
+update public.profiles set is_public = true, meeting_url = 'https://meet.google.com/example-ava'
+  where id = (select id from auth.users where email = 'ava.whitfield@example.com');
+update public.profiles set is_public = true, meeting_url = 'https://meet.google.com/example-marcus'
+  where id = (select id from auth.users where email = 'marcus.reid@example.com');
+update public.profiles set is_public = true
+  where id = (select id from auth.users where email = 'tom.okafor@example.com');
+
+update public.projects set challenge_started_at = current_date - 10
+  where title = 'Paper Boats';
+
+insert into public.challenge_milestones (project_id, day_number, phase, title, description, is_done, completed_at)
+select p.id, m.day, m.phase, m.title, m.description,
+  (m.day <= 10), case when m.day <= 10 then now() - ((10 - m.day) || ' days')::interval else null end
+from public.projects p
+join lateral (
+  values
+    (1, 'Development', 'Lock your logline and one-page synopsis', null),
+    (7, 'Development', 'Finish first draft of the script', null),
+    (14, 'Development', 'Get script notes from two readers', null),
+    (20, 'Development', 'Lock the final draft', null),
+    (25, 'Pre-production', 'Set your budget and financing plan', null),
+    (30, 'Pre-production', 'Attach key cast', null),
+    (35, 'Pre-production', 'Attach key crew', 'DP, sound, gaffer — post in the network directory if you need to find them.'),
+    (40, 'Pre-production', 'Lock locations', null),
+    (45, 'Pre-production', 'Finish shooting schedule and shot list', null),
+    (50, 'Production', 'Complete rehearsals', null),
+    (60, 'Production', 'Wrap principal photography', null),
+    (68, 'Post-production', 'Lock picture', null),
+    (75, 'Post-production', 'Finish sound mix and music', null),
+    (82, 'Post-production', 'Finish color grade', null),
+    (88, 'Delivery', 'Export final deliverables', null),
+    (90, 'Delivery', 'Submit to a festival, or share it', null)
+) as m(day, phase, title, description) on true
+where p.title = 'Paper Boats';
+
+insert into public.story_beats (project_id, position, title, description, is_done)
+select p.id, b.position, b.title, b.description, (b.position <= 2)
+from public.projects p
+join lateral (
+  values
+    (1, 'Opening image', 'The first thing we see — sets tone, before-state of your hero. ~p.1'),
+    (2, 'Setup', 'Introduce hero, world, and what''s missing in their life. ~p.1–10'),
+    (3, 'Catalyst', 'The inciting incident that kicks the story into motion. ~p.10–12'),
+    (4, 'Debate', 'Hero hesitates — can they really do this? ~p.12–25'),
+    (5, 'Break into two', 'Hero commits and enters the new world of the story. ~p.25')
+) as b(position, title, description) on true
+where p.title = 'Low Tide';
+
+with convo as (
+  insert into public.conversations default values returning id
+)
+insert into public.conversation_participants (conversation_id, profile_id)
+select convo.id, u.id from convo, auth.users u where u.email in ('ava.whitfield@example.com', 'marcus.reid@example.com');
+
+insert into public.messages (conversation_id, sender_id, body, created_at)
+select cp.conversation_id,
+  (select id from auth.users where email = 'ava.whitfield@example.com'),
+  'Hey Marcus — loved Concrete Garden. Any chance you know a gaffer free in November for a two-day shoot in Deptford?',
+  now() - interval '2 days'
+from public.conversation_participants cp
+join auth.users u1 on u1.id = cp.profile_id and u1.email = 'ava.whitfield@example.com'
+limit 1;
+
+insert into public.messages (conversation_id, sender_id, body, created_at)
+select cp.conversation_id,
+  (select id from auth.users where email = 'marcus.reid@example.com'),
+  'I do actually — I''ll send you their details. What''s the project?',
+  now() - interval '1 days'
+from public.conversation_participants cp
+join auth.users u1 on u1.id = cp.profile_id and u1.email = 'marcus.reid@example.com'
+limit 1;
+
+update public.conversations c set last_message_at = m.max_created
+from (select conversation_id, max(created_at) as max_created from public.messages group by conversation_id) m
+where c.id = m.conversation_id;

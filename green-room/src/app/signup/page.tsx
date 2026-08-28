@@ -7,14 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-
-const ROLE_OPTIONS = [
-  { value: "writer", label: "Writer", hint: "Track scripts, scenes, and submissions." },
-  { value: "director", label: "Director", hint: "Track projects from development to delivery." },
-  { value: "producer", label: "Producer", hint: "Track projects, submissions, and deadlines." },
-  { value: "editor", label: "Editor", hint: "Track projects through to delivery." },
-  { value: "actor", label: "Actor", hint: "Track auditions, sides, and availability." },
-] as const;
+import { ROLE_OPTIONS } from "@/lib/roles";
 
 export default function SignupPage() {
   const [state, action, pending] = useActionState<FormState, FormData>(signup, undefined);

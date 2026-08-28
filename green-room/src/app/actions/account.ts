@@ -4,18 +4,21 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { assertUser } from "@/lib/dal";
+import { ROLE_OPTIONS } from "@/lib/roles";
 
 export type AccountState = { error?: string; success?: boolean } | undefined;
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
-const roleEnum = z.enum(["writer", "director", "producer", "editor", "actor"]);
+const roleEnum = z.enum(ROLE_OPTIONS.map((r) => r.value) as [string, ...string[]]);
 
 const schema = z.object({
   displayName: z.string().trim().min(2, "Name must be at least 2 characters.").max(80),
   bio: z.string().trim().max(500).optional(),
   location: z.string().trim().max(120).optional(),
   roles: z.array(roleEnum),
+  isPublic: z.boolean(),
+  meetingUrl: z.union([z.url(), z.literal("")]).optional(),
   imdb: z.union([z.url(), z.literal("")]).optional(),
   instagram: z.union([z.url(), z.literal("")]).optional(),
   site: z.union([z.url(), z.literal("")]).optional(),
@@ -29,6 +32,8 @@ export async function updateAccount(_prevState: AccountState, formData: FormData
     bio: formData.get("bio") || undefined,
     location: formData.get("location") || undefined,
     roles: formData.getAll("roles"),
+    isPublic: formData.get("isPublic") === "on",
+    meetingUrl: formData.get("meetingUrl") || "",
     imdb: formData.get("imdb") || "",
     instagram: formData.get("instagram") || "",
     site: formData.get("site") || "",
@@ -70,6 +75,8 @@ export async function updateAccount(_prevState: AccountState, formData: FormData
       bio: parsed.data.bio ?? null,
       location: parsed.data.location ?? null,
       creative_roles: parsed.data.roles,
+      is_public: parsed.data.isPublic,
+      meeting_url: parsed.data.meetingUrl || null,
       links,
       ...(photoUrl ? { photo_url: photoUrl } : {}),
     })

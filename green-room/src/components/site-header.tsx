@@ -10,6 +10,8 @@ const memberLinks = [
   { href: "/auditions", label: "Auditions" },
   { href: "/availability", label: "Availability" },
   { href: "/materials", label: "Materials" },
+  { href: "/network", label: "Network" },
+  { href: "/messages", label: "Messages" },
 ];
 
 function Wordmark() {
