@@ -1,5 +1,7 @@
--- The Green Room — schema + RLS
--- Roles: guest (no auth.uid()), member (authenticated, role='member'), admin (role='admin')
+-- The Green Room — planner schema
+-- A private, per-user production/career planner for screen creatives.
+-- Every table is owner-only: a row is visible and writable only to the
+-- profile that owns it. There is no admin role and no shared/public content.
 
 create extension if not exists "pgcrypto";
 
@@ -12,30 +14,17 @@ create table public.profiles (
   bio text,
   photo_url text,
   location text,
+  -- Drives which planner sections show up: any of 'writer', 'director', 'actor'.
   creative_roles text[] not null default '{}',
   links jsonb not null default '{}'::jsonb,
-  role text not null default 'member' check (role in ('member', 'admin')),
   created_at timestamptz not null default now()
 );
 
 comment on table public.profiles is 'One row per auth.users id. Created automatically by handle_new_user().';
 
--- Admin check as SECURITY DEFINER so RLS policies on profiles don't recurse.
-create function public.is_admin(uid uuid)
-returns boolean
-language sql
-stable
-security definer
-set search_path = public
-as $$
-  select exists (
-    select 1 from public.profiles where id = uid and role = 'admin'
-  );
-$$;
+create schema if not exists private;
 
--- Auto-create a profile row when a new auth user signs up. Role is always
--- 'member' here — nobody can request 'admin' at signup time.
-create function public.handle_new_user()
+create function private.handle_new_user()
 returns trigger
 language plpgsql
 security definer
@@ -53,308 +42,207 @@ $$;
 
 create trigger on_auth_user_created
   after insert on auth.users
-  for each row execute function public.handle_new_user();
+  for each row execute function private.handle_new_user();
 
--- Block self-promotion: role can only change when the actor is already an admin.
-create function public.prevent_role_escalation()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if new.role is distinct from old.role and not public.is_admin(auth.uid()) then
-    new.role := old.role;
-  end if;
-  return new;
-end;
-$$;
-
-create trigger profiles_prevent_role_escalation
-  before update on public.profiles
-  for each row execute function public.prevent_role_escalation();
+revoke execute on function private.handle_new_user() from public, anon, authenticated;
 
 alter table public.profiles enable row level security;
 
--- Public read (guests browse member profiles, spotlight archive, etc).
-create policy profiles_select_all on public.profiles
-  for select using (true);
+-- Private planner: you can only see your own profile.
+create policy profiles_select_own on public.profiles
+  for select using (auth.uid() = id);
 
--- Members can edit their own row (role changes are neutralized by the trigger above).
 create policy profiles_update_own on public.profiles
   for update using (auth.uid() = id) with check (auth.uid() = id);
 
--- Admins can edit any profile (e.g. promote a moderator, fix a listing).
-create policy profiles_update_admin on public.profiles
-  for update using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
-
 -- No insert/delete policy: rows are created only via handle_new_user() and
--- deleted only via the auth.users cascade. Client-side insert/delete is denied by default.
+-- deleted only via the auth.users cascade.
 
 -- ---------------------------------------------------------------------------
--- events
+-- projects (writer / director)
 -- ---------------------------------------------------------------------------
-create table public.events (
+create table public.projects (
   id uuid primary key default gen_random_uuid(),
+  owner_id uuid not null references public.profiles (id) on delete cascade,
   title text not null,
-  description text not null default '',
-  location text,
-  is_online boolean not null default false,
-  price_note text not null default 'Free',
-  start_at timestamptz not null,
-  end_at timestamptz,
-  external_url text,
-  is_published boolean not null default false,
-  created_by uuid references public.profiles (id) on delete set null,
+  logline text,
+  format text not null default 'feature' check (format in ('short', 'feature', 'pilot', 'tv_movie', 'other')),
+  stage text not null default 'idea' check (
+    stage in ('idea', 'outline', 'drafting', 'revision', 'polish', 'locked', 'in_production', 'delivered')
+  ),
+  target_deadline date,
   created_at timestamptz not null default now()
 );
 
-create index events_start_at_idx on public.events (start_at);
+create index projects_owner_id_idx on public.projects (owner_id);
 
-alter table public.events enable row level security;
+alter table public.projects enable row level security;
 
-create policy events_select_published_or_admin on public.events
-  for select using (is_published or public.is_admin(auth.uid()));
-
-create policy events_write_admin on public.events
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+create policy projects_owner_only on public.projects
+  for all using (owner_id = auth.uid()) with check (owner_id = auth.uid());
 
 -- ---------------------------------------------------------------------------
--- opportunities
+-- scenes (belong to a project)
 -- ---------------------------------------------------------------------------
-create table public.opportunities (
+create table public.scenes (
   id uuid primary key default gen_random_uuid(),
-  title text not null,
-  organizer text not null,
-  description text not null default '',
-  category text not null default 'general',
-  deadline_at timestamptz not null,
-  external_url text,
-  is_published boolean not null default false,
-  created_by uuid references public.profiles (id) on delete set null,
+  project_id uuid not null references public.projects (id) on delete cascade,
+  scene_number int not null default 1,
+  heading text not null default '',
+  status text not null default 'needs_work' check (status in ('needs_work', 'drafted', 'revised', 'locked')),
+  notes text,
   created_at timestamptz not null default now()
 );
 
-create index opportunities_deadline_at_idx on public.opportunities (deadline_at);
+create index scenes_project_id_idx on public.scenes (project_id);
 
-alter table public.opportunities enable row level security;
+alter table public.scenes enable row level security;
 
-create policy opportunities_select_published_or_admin on public.opportunities
-  for select using (is_published or public.is_admin(auth.uid()));
-
-create policy opportunities_write_admin on public.opportunities
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+create policy scenes_owner_only on public.scenes
+  for all using (
+    exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid())
+  ) with check (
+    exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid())
+  );
 
 -- ---------------------------------------------------------------------------
--- resources
+-- submissions (belong to a project — competitions, agents, producers)
 -- ---------------------------------------------------------------------------
-create table public.resources (
+create table public.submissions (
   id uuid primary key default gen_random_uuid(),
-  name text not null,
-  description text not null default '',
-  category text not null default 'general',
-  external_url text not null,
-  is_published boolean not null default false,
+  project_id uuid not null references public.projects (id) on delete cascade,
+  target_name text not null,
+  target_type text not null default 'other' check (target_type in ('competition', 'festival', 'agent', 'producer', 'other')),
+  submitted_at date not null default current_date,
+  response_due_at date,
+  status text not null default 'submitted' check (status in ('submitted', 'pending', 'rejected', 'accepted')),
+  notes text,
   created_at timestamptz not null default now()
 );
 
-alter table public.resources enable row level security;
+create index submissions_project_id_idx on public.submissions (project_id);
 
-create policy resources_select_published_or_admin on public.resources
-  for select using (is_published or public.is_admin(auth.uid()));
+alter table public.submissions enable row level security;
 
-create policy resources_write_admin on public.resources
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+create policy submissions_owner_only on public.submissions
+  for all using (
+    exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid())
+  ) with check (
+    exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid())
+  );
 
 -- ---------------------------------------------------------------------------
--- spotlights
+-- writing goals + session log
 -- ---------------------------------------------------------------------------
-create table public.spotlights (
+create table public.writing_goals (
   id uuid primary key default gen_random_uuid(),
-  profile_id uuid not null references public.profiles (id) on delete cascade,
-  headline text not null,
-  story text not null default '',
-  is_current boolean not null default false,
-  published_at timestamptz
+  owner_id uuid not null unique references public.profiles (id) on delete cascade,
+  cadence text not null default 'daily' check (cadence in ('daily', 'weekly')),
+  unit text not null default 'pages' check (unit in ('words', 'pages')),
+  target_amount int not null default 1 check (target_amount > 0)
 );
 
--- Only one spotlight may be "current" at a time.
-create function public.enforce_single_current_spotlight()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if new.is_current then
-    update public.spotlights set is_current = false where id <> new.id and is_current;
-  end if;
-  return new;
-end;
-$$;
+alter table public.writing_goals enable row level security;
 
-create trigger spotlights_single_current
-  before insert or update on public.spotlights
-  for each row execute function public.enforce_single_current_spotlight();
+create policy writing_goals_owner_only on public.writing_goals
+  for all using (owner_id = auth.uid()) with check (owner_id = auth.uid());
 
-alter table public.spotlights enable row level security;
-
-create policy spotlights_select_published_or_admin on public.spotlights
-  for select using (published_at is not null or public.is_admin(auth.uid()));
-
-create policy spotlights_write_admin on public.spotlights
-  for all using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
-
--- ---------------------------------------------------------------------------
--- nominations (member-submitted, admin-reviewed — holds contact details, so
--- it is never publicly readable)
--- ---------------------------------------------------------------------------
-create table public.nominations (
+create table public.writing_sessions (
   id uuid primary key default gen_random_uuid(),
-  nominator_id uuid not null references public.profiles (id) on delete cascade,
-  nominee_name text not null,
-  nominee_contact text,
-  reason text not null default '',
-  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  owner_id uuid not null references public.profiles (id) on delete cascade,
+  project_id uuid references public.projects (id) on delete set null,
+  session_date date not null default current_date,
+  unit text not null default 'pages' check (unit in ('words', 'pages')),
+  amount int not null check (amount > 0),
+  notes text,
   created_at timestamptz not null default now()
 );
 
-alter table public.nominations enable row level security;
+create index writing_sessions_owner_id_idx on public.writing_sessions (owner_id, session_date desc);
 
-create policy nominations_select_own_or_admin on public.nominations
-  for select using (nominator_id = auth.uid() or public.is_admin(auth.uid()));
+alter table public.writing_sessions enable row level security;
 
-create policy nominations_insert_own on public.nominations
-  for insert with check (nominator_id = auth.uid());
-
-create policy nominations_update_admin on public.nominations
-  for update using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
+create policy writing_sessions_owner_only on public.writing_sessions
+  for all using (owner_id = auth.uid()) with check (owner_id = auth.uid());
 
 -- ---------------------------------------------------------------------------
--- posts + comments + likes (community feed)
+-- materials (headshots, reels, resume versions)
 -- ---------------------------------------------------------------------------
-create table public.posts (
+create table public.materials (
   id uuid primary key default gen_random_uuid(),
-  author_id uuid not null references public.profiles (id) on delete cascade,
-  body text not null check (char_length(body) between 1 and 2000),
-  image_url text,
-  is_hidden boolean not null default false,
+  owner_id uuid not null references public.profiles (id) on delete cascade,
+  type text not null default 'other' check (type in ('headshot', 'reel', 'resume', 'other')),
+  label text not null,
+  url text not null,
   created_at timestamptz not null default now()
 );
 
-create index posts_created_at_idx on public.posts (created_at desc);
+create index materials_owner_id_idx on public.materials (owner_id);
 
-alter table public.posts enable row level security;
+alter table public.materials enable row level security;
 
-create policy posts_select_visible on public.posts
-  for select using (not is_hidden or author_id = auth.uid() or public.is_admin(auth.uid()));
+create policy materials_owner_only on public.materials
+  for all using (owner_id = auth.uid()) with check (owner_id = auth.uid());
 
-create policy posts_insert_own on public.posts
-  for insert with check (author_id = auth.uid());
-
--- Authors can edit their own text/image but cannot un-hide a moderated post.
-create policy posts_update_own on public.posts
-  for update using (author_id = auth.uid())
-  with check (author_id = auth.uid() and is_hidden = false);
-
-create policy posts_update_admin on public.posts
-  for update using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
-
-create policy posts_delete_own_or_admin on public.posts
-  for delete using (author_id = auth.uid() or public.is_admin(auth.uid()));
-
-create table public.comments (
+-- ---------------------------------------------------------------------------
+-- auditions (actor pipeline, with sides/self-tape fields inline)
+-- ---------------------------------------------------------------------------
+create table public.auditions (
   id uuid primary key default gen_random_uuid(),
-  post_id uuid not null references public.posts (id) on delete cascade,
-  author_id uuid not null references public.profiles (id) on delete cascade,
-  body text not null check (char_length(body) between 1 and 1000),
-  is_hidden boolean not null default false,
+  owner_id uuid not null references public.profiles (id) on delete cascade,
+  project_name text not null,
+  role_name text not null,
+  casting_office text,
+  audition_date timestamptz,
+  callback_date timestamptz,
+  status text not null default 'submitted' check (status in ('submitted', 'callback', 'booked', 'passed', 'declined')),
+  sides_url text,
+  self_tape_deadline timestamptz,
+  self_tape_url text,
+  take_notes text,
+  headshot_id uuid references public.materials (id) on delete set null,
+  resume_id uuid references public.materials (id) on delete set null,
+  reel_id uuid references public.materials (id) on delete set null,
+  notes text,
   created_at timestamptz not null default now()
 );
 
-create index comments_post_id_idx on public.comments (post_id);
+create index auditions_owner_id_idx on public.auditions (owner_id);
 
-alter table public.comments enable row level security;
+alter table public.auditions enable row level security;
 
-create policy comments_select_visible on public.comments
-  for select using (not is_hidden or author_id = auth.uid() or public.is_admin(auth.uid()));
+create policy auditions_owner_only on public.auditions
+  for all using (owner_id = auth.uid()) with check (owner_id = auth.uid());
 
-create policy comments_insert_own on public.comments
-  for insert with check (author_id = auth.uid());
-
-create policy comments_update_own on public.comments
-  for update using (author_id = auth.uid())
-  with check (author_id = auth.uid() and is_hidden = false);
-
-create policy comments_update_admin on public.comments
-  for update using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
-
-create policy comments_delete_own_or_admin on public.comments
-  for delete using (author_id = auth.uid() or public.is_admin(auth.uid()));
-
-create table public.post_likes (
-  post_id uuid not null references public.posts (id) on delete cascade,
-  user_id uuid not null references public.profiles (id) on delete cascade,
+-- ---------------------------------------------------------------------------
+-- availability (blocked date ranges — default assumption is "available")
+-- ---------------------------------------------------------------------------
+create table public.availability_blocks (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid not null references public.profiles (id) on delete cascade,
+  start_date date not null,
+  end_date date not null,
+  reason text,
   created_at timestamptz not null default now(),
-  primary key (post_id, user_id)
+  check (end_date >= start_date)
 );
 
-alter table public.post_likes enable row level security;
+create index availability_blocks_owner_id_idx on public.availability_blocks (owner_id);
 
-create policy post_likes_select_all on public.post_likes
-  for select using (true);
+alter table public.availability_blocks enable row level security;
 
-create policy post_likes_insert_own on public.post_likes
-  for insert with check (user_id = auth.uid());
-
-create policy post_likes_delete_own on public.post_likes
-  for delete using (user_id = auth.uid());
+create policy availability_blocks_owner_only on public.availability_blocks
+  for all using (owner_id = auth.uid()) with check (owner_id = auth.uid());
 
 -- ---------------------------------------------------------------------------
--- saved_items (private bookmarks)
--- ---------------------------------------------------------------------------
-create table public.saved_items (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references public.profiles (id) on delete cascade,
-  item_type text not null check (item_type in ('event', 'opportunity')),
-  item_id uuid not null,
-  created_at timestamptz not null default now(),
-  unique (user_id, item_type, item_id)
-);
-
-alter table public.saved_items enable row level security;
-
-create policy saved_items_owner_only on public.saved_items
-  for all using (user_id = auth.uid()) with check (user_id = auth.uid());
-
--- ---------------------------------------------------------------------------
--- subscribers (newsletter capture — write-only from the public, never
--- publicly readable so email addresses can't be scraped)
--- ---------------------------------------------------------------------------
-create table public.subscribers (
-  id uuid primary key default gen_random_uuid(),
-  email text not null unique check (email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'),
-  created_at timestamptz not null default now()
-);
-
-alter table public.subscribers enable row level security;
-
-create policy subscribers_insert_anyone on public.subscribers
-  for insert with check (true);
-
-create policy subscribers_select_admin on public.subscribers
-  for select using (public.is_admin(auth.uid()));
-
--- ---------------------------------------------------------------------------
--- storage: public media bucket for headshots + post images
+-- storage: public media bucket for headshots / reels / sides / attachments
 -- ---------------------------------------------------------------------------
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('media', 'media', true, 5242880, array['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
-on conflict (id) do nothing;
+values ('media', 'media', true, 10485760, array['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'])
+on conflict (id) do update set file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
 
 -- Object paths are namespaced "<uid>/...", enforced below so members can only
--- write inside their own folder. Reads are public (avatars/post images are
--- meant to be visible to guests too).
+-- write inside their own folder.
 create policy media_select_public on storage.objects
   for select using (bucket_id = 'media');
 
@@ -370,11 +258,8 @@ create policy media_update_own_folder on storage.objects
     and (storage.foldername(name))[1] = auth.uid()::text
   );
 
-create policy media_delete_own_or_admin on storage.objects
+create policy media_delete_own_folder on storage.objects
   for delete using (
     bucket_id = 'media'
-    and (
-      (storage.foldername(name))[1] = auth.uid()::text
-      or public.is_admin(auth.uid())
-    )
+    and (storage.foldername(name))[1] = auth.uid()::text
   );

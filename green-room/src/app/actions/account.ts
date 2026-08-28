@@ -5,34 +5,32 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { assertUser } from "@/lib/dal";
 
-export type ProfileState = { error?: string; success?: boolean } | undefined;
+export type AccountState = { error?: string; success?: boolean } | undefined;
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const roleEnum = z.enum(["writer", "director", "actor"]);
 
 const schema = z.object({
   displayName: z.string().trim().min(2, "Name must be at least 2 characters.").max(80),
   bio: z.string().trim().max(500).optional(),
   location: z.string().trim().max(120).optional(),
-  creativeRoles: z.string().trim().max(300).optional(),
-  reel: z.union([z.url(), z.literal("")]).optional(),
-  instagram: z.union([z.url(), z.literal("")]).optional(),
+  roles: z.array(roleEnum),
   imdb: z.union([z.url(), z.literal("")]).optional(),
+  instagram: z.union([z.url(), z.literal("")]).optional(),
   site: z.union([z.url(), z.literal("")]).optional(),
 });
 
-export async function updateProfile(_prevState: ProfileState, formData: FormData): Promise<ProfileState> {
-  // The row to update is always the caller's own — never taken from the form.
+export async function updateAccount(_prevState: AccountState, formData: FormData): Promise<AccountState> {
   const user = await assertUser();
 
   const parsed = schema.safeParse({
     displayName: formData.get("displayName"),
     bio: formData.get("bio") || undefined,
     location: formData.get("location") || undefined,
-    creativeRoles: formData.get("creativeRoles") || undefined,
-    reel: formData.get("reel") || "",
-    instagram: formData.get("instagram") || "",
+    roles: formData.getAll("roles"),
     imdb: formData.get("imdb") || "",
+    instagram: formData.get("instagram") || "",
     site: formData.get("site") || "",
   });
   if (!parsed.success) {
@@ -60,9 +58,8 @@ export async function updateProfile(_prevState: ProfileState, formData: FormData
   }
 
   const links = {
-    ...(parsed.data.reel ? { reel: parsed.data.reel } : {}),
-    ...(parsed.data.instagram ? { instagram: parsed.data.instagram } : {}),
     ...(parsed.data.imdb ? { imdb: parsed.data.imdb } : {}),
+    ...(parsed.data.instagram ? { instagram: parsed.data.instagram } : {}),
     ...(parsed.data.site ? { site: parsed.data.site } : {}),
   };
 
@@ -72,16 +69,15 @@ export async function updateProfile(_prevState: ProfileState, formData: FormData
       display_name: parsed.data.displayName,
       bio: parsed.data.bio ?? null,
       location: parsed.data.location ?? null,
-      creative_roles: parsed.data.creativeRoles
-        ? parsed.data.creativeRoles.split(",").map((r) => r.trim()).filter(Boolean)
-        : [],
+      creative_roles: parsed.data.roles,
       links,
       ...(photoUrl ? { photo_url: photoUrl } : {}),
     })
     .eq("id", user.id);
 
-  if (error) return { error: "Something went wrong saving your profile." };
+  if (error) return { error: "Something went wrong saving your account." };
 
-  revalidatePath(`/profile/${user.id}`);
+  revalidatePath("/account");
+  revalidatePath("/");
   return { success: true };
 }

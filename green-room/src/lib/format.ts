@@ -1,27 +1,24 @@
 import { differenceInCalendarDays, format } from "date-fns";
 
-export function formatEventRange(startAt: string, endAt: string | null) {
-  const start = new Date(startAt);
-  const end = endAt ? new Date(endAt) : null;
-  const datePart = format(start, "EEE d MMM yyyy");
-  const timePart = format(start, "HH:mm");
-  if (end && format(end, "yyyy-MM-dd") === format(start, "yyyy-MM-dd")) {
-    return `${datePart} · ${timePart}–${format(end, "HH:mm")}`;
-  }
-  return `${datePart} · ${timePart}`;
+export function formatDate(dateStr: string) {
+  return format(new Date(dateStr), "d MMM yyyy");
 }
 
-export function formatDeadline(deadlineAt: string) {
-  const deadline = new Date(deadlineAt);
-  const days = differenceInCalendarDays(deadline, new Date());
-  if (days < 0) return "Closed";
-  if (days === 0) return "Closes today";
-  if (days === 1) return "1 day left";
-  return `${days} days left`;
+export function formatDateTime(dateStr: string) {
+  return format(new Date(dateStr), "EEE d MMM yyyy · HH:mm");
 }
 
-export function isPastDeadline(deadlineAt: string) {
-  return new Date(deadlineAt).getTime() < Date.now();
+/** "3 days left" / "Today" / "2 days ago" — for deadlines and audition dates. */
+export function relativeDays(dateStr: string) {
+  const days = differenceInCalendarDays(new Date(dateStr), new Date());
+  if (days === 0) return "Today";
+  if (days > 0) return days === 1 ? "1 day left" : `${days} days left`;
+  const past = Math.abs(days);
+  return past === 1 ? "1 day ago" : `${past} days ago`;
+}
+
+export function isPast(dateStr: string) {
+  return new Date(dateStr).getTime() < Date.now();
 }
 
 /** Formats an ISO timestamp for a <input type="datetime-local"> defaultValue. */
@@ -29,4 +26,9 @@ export function toLocalInput(iso: string) {
   const d = new Date(iso);
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/** Formats a date (no time) for a <input type="date"> defaultValue. */
+export function toDateInput(dateStr: string) {
+  return dateStr.slice(0, 10);
 }

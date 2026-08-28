@@ -12,248 +12,159 @@ export type Database = {
   }
   public: {
     Tables: {
-      comments: {
+      auditions: {
         Row: {
-          author_id: string
-          body: string
+          audition_date: string | null
+          callback_date: string | null
+          casting_office: string | null
           created_at: string
+          headshot_id: string | null
           id: string
-          is_hidden: boolean
-          post_id: string
-        }
-        Insert: {
-          author_id: string
-          body: string
-          created_at?: string
-          id?: string
-          is_hidden?: boolean
-          post_id: string
-        }
-        Update: {
-          author_id?: string
-          body?: string
-          created_at?: string
-          id?: string
-          is_hidden?: boolean
-          post_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "comments_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      events: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          description: string
-          end_at: string | null
-          external_url: string | null
-          id: string
-          is_online: boolean
-          is_published: boolean
-          location: string | null
-          price_note: string
-          start_at: string
-          title: string
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          description?: string
-          end_at?: string | null
-          external_url?: string | null
-          id?: string
-          is_online?: boolean
-          is_published?: boolean
-          location?: string | null
-          price_note?: string
-          start_at: string
-          title: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          description?: string
-          end_at?: string | null
-          external_url?: string | null
-          id?: string
-          is_online?: boolean
-          is_published?: boolean
-          location?: string | null
-          price_note?: string
-          start_at?: string
-          title?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "events_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      nominations: {
-        Row: {
-          created_at: string
-          id: string
-          nominator_id: string
-          nominee_contact: string | null
-          nominee_name: string
-          reason: string
+          notes: string | null
+          owner_id: string
+          project_name: string
+          reel_id: string | null
+          resume_id: string | null
+          role_name: string
+          self_tape_deadline: string | null
+          self_tape_url: string | null
+          sides_url: string | null
           status: string
+          take_notes: string | null
         }
         Insert: {
+          audition_date?: string | null
+          callback_date?: string | null
+          casting_office?: string | null
           created_at?: string
+          headshot_id?: string | null
           id?: string
-          nominator_id: string
-          nominee_contact?: string | null
-          nominee_name: string
-          reason?: string
+          notes?: string | null
+          owner_id: string
+          project_name: string
+          reel_id?: string | null
+          resume_id?: string | null
+          role_name: string
+          self_tape_deadline?: string | null
+          self_tape_url?: string | null
+          sides_url?: string | null
           status?: string
+          take_notes?: string | null
         }
         Update: {
+          audition_date?: string | null
+          callback_date?: string | null
+          casting_office?: string | null
           created_at?: string
+          headshot_id?: string | null
           id?: string
-          nominator_id?: string
-          nominee_contact?: string | null
-          nominee_name?: string
-          reason?: string
+          notes?: string | null
+          owner_id?: string
+          project_name?: string
+          reel_id?: string | null
+          resume_id?: string | null
+          role_name?: string
+          self_tape_deadline?: string | null
+          self_tape_url?: string | null
+          sides_url?: string | null
           status?: string
+          take_notes?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "nominations_nominator_id_fkey"
-            columns: ["nominator_id"]
+            foreignKeyName: "auditions_headshot_id_fkey"
+            columns: ["headshot_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "auditions_owner_id_fkey"
+            columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "auditions_reel_id_fkey"
+            columns: ["reel_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "auditions_resume_id_fkey"
+            columns: ["resume_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
         ]
       }
-      opportunities: {
+      availability_blocks: {
         Row: {
-          category: string
           created_at: string
-          created_by: string | null
-          deadline_at: string
-          description: string
-          external_url: string | null
+          end_date: string
           id: string
-          is_published: boolean
-          organizer: string
-          title: string
+          owner_id: string
+          reason: string | null
+          start_date: string
         }
         Insert: {
-          category?: string
           created_at?: string
-          created_by?: string | null
-          deadline_at: string
-          description?: string
-          external_url?: string | null
+          end_date: string
           id?: string
-          is_published?: boolean
-          organizer: string
-          title: string
+          owner_id: string
+          reason?: string | null
+          start_date: string
         }
         Update: {
-          category?: string
           created_at?: string
-          created_by?: string | null
-          deadline_at?: string
-          description?: string
-          external_url?: string | null
+          end_date?: string
           id?: string
-          is_published?: boolean
-          organizer?: string
-          title?: string
+          owner_id?: string
+          reason?: string | null
+          start_date?: string
         }
         Relationships: [
           {
-            foreignKeyName: "opportunities_created_by_fkey"
-            columns: ["created_by"]
+            foreignKeyName: "availability_blocks_owner_id_fkey"
+            columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      post_likes: {
+      materials: {
         Row: {
-          created_at: string
-          post_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          post_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          post_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "post_likes_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_likes_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      posts: {
-        Row: {
-          author_id: string
-          body: string
           created_at: string
           id: string
-          image_url: string | null
-          is_hidden: boolean
+          label: string
+          owner_id: string
+          type: string
+          url: string
         }
         Insert: {
-          author_id: string
-          body: string
           created_at?: string
           id?: string
-          image_url?: string | null
-          is_hidden?: boolean
+          label: string
+          owner_id: string
+          type?: string
+          url: string
         }
         Update: {
-          author_id?: string
-          body?: string
           created_at?: string
           id?: string
-          image_url?: string | null
-          is_hidden?: boolean
+          label?: string
+          owner_id?: string
+          type?: string
+          url?: string
         }
         Relationships: [
           {
-            foreignKeyName: "posts_author_id_fkey"
-            columns: ["author_id"]
+            foreignKeyName: "materials_owner_id_fkey"
+            columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -270,7 +181,6 @@ export type Database = {
           links: Json
           location: string | null
           photo_url: string | null
-          role: string
         }
         Insert: {
           bio?: string | null
@@ -281,7 +191,6 @@ export type Database = {
           links?: Json
           location?: string | null
           photo_url?: string | null
-          role?: string
         }
         Update: {
           bio?: string | null
@@ -292,131 +201,218 @@ export type Database = {
           links?: Json
           location?: string | null
           photo_url?: string | null
-          role?: string
         }
         Relationships: []
       }
-      resources: {
-        Row: {
-          category: string
-          created_at: string
-          description: string
-          external_url: string
-          id: string
-          is_published: boolean
-          name: string
-        }
-        Insert: {
-          category?: string
-          created_at?: string
-          description?: string
-          external_url: string
-          id?: string
-          is_published?: boolean
-          name: string
-        }
-        Update: {
-          category?: string
-          created_at?: string
-          description?: string
-          external_url?: string
-          id?: string
-          is_published?: boolean
-          name?: string
-        }
-        Relationships: []
-      }
-      saved_items: {
+      projects: {
         Row: {
           created_at: string
+          format: string
           id: string
-          item_id: string
-          item_type: string
-          user_id: string
+          logline: string | null
+          owner_id: string
+          stage: string
+          target_deadline: string | null
+          title: string
         }
         Insert: {
           created_at?: string
+          format?: string
           id?: string
-          item_id: string
-          item_type: string
-          user_id: string
+          logline?: string | null
+          owner_id: string
+          stage?: string
+          target_deadline?: string | null
+          title: string
         }
         Update: {
           created_at?: string
+          format?: string
           id?: string
-          item_id?: string
-          item_type?: string
-          user_id?: string
+          logline?: string | null
+          owner_id?: string
+          stage?: string
+          target_deadline?: string | null
+          title?: string
         }
         Relationships: [
           {
-            foreignKeyName: "saved_items_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "projects_owner_id_fkey"
+            columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      spotlights: {
+      scenes: {
         Row: {
-          headline: string
+          created_at: string
+          heading: string
           id: string
-          is_current: boolean
-          profile_id: string
-          published_at: string | null
-          story: string
+          notes: string | null
+          project_id: string
+          scene_number: number
+          status: string
         }
         Insert: {
-          headline: string
+          created_at?: string
+          heading?: string
           id?: string
-          is_current?: boolean
-          profile_id: string
-          published_at?: string | null
-          story?: string
+          notes?: string | null
+          project_id: string
+          scene_number?: number
+          status?: string
         }
         Update: {
-          headline?: string
+          created_at?: string
+          heading?: string
           id?: string
-          is_current?: boolean
-          profile_id?: string
-          published_at?: string | null
-          story?: string
+          notes?: string | null
+          project_id?: string
+          scene_number?: number
+          status?: string
         }
         Relationships: [
           {
-            foreignKeyName: "spotlights_profile_id_fkey"
-            columns: ["profile_id"]
+            foreignKeyName: "scenes_project_id_fkey"
+            columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submissions: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          project_id: string
+          response_due_at: string | null
+          status: string
+          submitted_at: string
+          target_name: string
+          target_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          project_id: string
+          response_due_at?: string | null
+          status?: string
+          submitted_at?: string
+          target_name: string
+          target_type?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          project_id?: string
+          response_due_at?: string | null
+          status?: string
+          submitted_at?: string
+          target_name?: string
+          target_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      writing_goals: {
+        Row: {
+          cadence: string
+          id: string
+          owner_id: string
+          target_amount: number
+          unit: string
+        }
+        Insert: {
+          cadence?: string
+          id?: string
+          owner_id: string
+          target_amount?: number
+          unit?: string
+        }
+        Update: {
+          cadence?: string
+          id?: string
+          owner_id?: string
+          target_amount?: number
+          unit?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "writing_goals_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      subscribers: {
+      writing_sessions: {
         Row: {
+          amount: number
           created_at: string
-          email: string
           id: string
+          notes: string | null
+          owner_id: string
+          project_id: string | null
+          session_date: string
+          unit: string
         }
         Insert: {
+          amount: number
           created_at?: string
-          email: string
           id?: string
+          notes?: string | null
+          owner_id: string
+          project_id?: string | null
+          session_date?: string
+          unit?: string
         }
         Update: {
+          amount?: number
           created_at?: string
-          email?: string
           id?: string
+          notes?: string | null
+          owner_id?: string
+          project_id?: string | null
+          session_date?: string
+          unit?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "writing_sessions_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "writing_sessions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      is_admin: { Args: { uid: string }; Returns: boolean }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

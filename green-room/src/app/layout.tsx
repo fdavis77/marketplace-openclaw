@@ -16,9 +16,9 @@ const displayFont = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "The Green Room — a home for independent filmmakers",
+  title: "The Green Room — a planner for screen creatives",
   description:
-    "Events, opportunities, resources, and a real community for independent filmmakers and screen-industry creatives.",
+    "Track scripts, scenes, and submissions as a writer or director; run your audition pipeline, self-tapes, availability, and materials as an actor.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

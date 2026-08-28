@@ -27,31 +27,15 @@ export const getCurrentUser = cache(async () => {
   return profile as Profile | null;
 });
 
-/** Redirects to /login if there is no session. Use in pages that require any signed-in member. */
+/** Redirects to /login if there is no session. Use in pages that require a signed-in member. */
 export async function requireUser() {
   const profile = await getCurrentUser();
   if (!profile) redirect("/login");
   return profile;
 }
 
-/** Redirects unless the current user is an admin. Use at the top of every /admin page. */
-export async function requireAdmin() {
-  const profile = await getCurrentUser();
-  if (!profile || profile.role !== "admin") redirect("/");
-  return profile;
-}
-
 /** Throws instead of redirecting — use inside Server Actions, where a thrown
  * error becomes a caught, user-facing message rather than a silent redirect. */
-export async function assertAdmin() {
-  const profile = await getCurrentUser();
-  if (!profile || profile.role !== "admin") {
-    throw new Error("Forbidden: admin access required.");
-  }
-  return profile;
-}
-
-/** Throws instead of redirecting — use inside Server Actions for any signed-in member. */
 export async function assertUser() {
   const profile = await getCurrentUser();
   if (!profile) throw new Error("You must be signed in to do that.");
