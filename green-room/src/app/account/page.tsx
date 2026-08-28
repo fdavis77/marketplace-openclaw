@@ -7,7 +7,7 @@ export default async function AccountPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-      <h1 className="font-display text-3xl font-extrabold">Account</h1>
+      <h1 className="font-display text-3xl">Account</h1>
       <p className="mt-2 text-muted">Private to you — nothing here is shown to anyone else.</p>
 
       <Card className="mt-8">

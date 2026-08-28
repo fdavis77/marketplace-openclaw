@@ -26,11 +26,11 @@ export default async function MaterialsPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-      <h1 className="font-display text-3xl font-extrabold">Materials</h1>
+      <h1 className="font-display text-3xl">Materials</h1>
       <p className="mt-2 text-muted">Headshots, reels, and resume versions — linkable to any audition.</p>
 
-      <details className="mt-8 rounded-card border border-border bg-surface p-4">
-        <summary className="cursor-pointer font-display font-semibold">+ Add material</summary>
+      <details className="mt-8 rounded-card bg-surface p-4">
+        <summary className="cursor-pointer font-display">+ Add material</summary>
         <MaterialForm />
       </details>
 
@@ -39,7 +39,7 @@ export default async function MaterialsPage() {
         if (!items.length) return null;
         return (
           <section key={type} className="mt-8">
-            <h2 className="font-display text-xl font-bold">{TYPE_LABELS[type]}</h2>
+            <h2 className="font-display text-xl">{TYPE_LABELS[type]}</h2>
             <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((m) => (
                 <Card key={m.id}>

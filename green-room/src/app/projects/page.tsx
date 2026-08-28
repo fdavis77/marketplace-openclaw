@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Field } from "@/components/field";
+import { Field, selectClass } from "@/components/field";
 import { formatDate } from "@/lib/format";
 
 const STAGE_LABELS: Record<string, string> = {
@@ -32,15 +32,15 @@ export default async function ProjectsPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-      <h1 className="font-display text-3xl font-extrabold">Projects</h1>
+      <h1 className="font-display text-3xl">Projects</h1>
       <p className="mt-2 text-muted">Every script, from idea to delivered.</p>
 
-      <details className="mt-8 rounded-card border border-border bg-surface p-4">
-        <summary className="cursor-pointer font-display font-semibold">+ New project</summary>
+      <details className="mt-8 rounded-card bg-surface p-4">
+        <summary className="cursor-pointer font-display">+ New project</summary>
         <form action={createProject} className="mt-4 grid gap-3 sm:grid-cols-2">
           <Field label="Title"><Input name="title" required maxLength={200} /></Field>
           <Field label="Format">
-            <select name="format" defaultValue="feature" className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+            <select name="format" defaultValue="feature" className={selectClass}>
               <option value="short">Short</option>
               <option value="feature">Feature</option>
               <option value="pilot">Pilot</option>
@@ -49,7 +49,7 @@ export default async function ProjectsPage() {
             </select>
           </Field>
           <Field label="Stage">
-            <select name="stage" defaultValue="idea" className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+            <select name="stage" defaultValue="idea" className={selectClass}>
               {Object.entries(STAGE_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
               ))}

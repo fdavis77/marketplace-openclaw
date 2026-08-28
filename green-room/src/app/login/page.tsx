@@ -22,7 +22,7 @@ export default function LoginPage() {
   return (
     <div className="mx-auto flex max-w-md flex-col gap-6 px-4 py-16">
       <div className="text-center">
-        <h1 className="font-display text-3xl font-extrabold">Welcome back</h1>
+        <h1 className="font-display text-3xl">Welcome back</h1>
       </div>
       <Card>
         <CardHeader>

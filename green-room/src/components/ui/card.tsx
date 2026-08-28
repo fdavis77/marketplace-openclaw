@@ -4,10 +4,7 @@ import { cn } from "@/lib/utils";
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "rounded-card border border-border bg-surface shadow-sm",
-        className
-      )}
+      className={cn("rounded-card bg-surface shadow-sm", className)}
       {...props}
     />
   );
@@ -19,7 +16,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
 
 function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return (
-    <h3 className={cn("font-display text-lg font-semibold", className)} {...props} />
+    <h3 className={cn("font-display text-lg", className)} {...props} />
   );
 }
 

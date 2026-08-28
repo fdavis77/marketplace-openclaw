@@ -5,8 +5,8 @@ import { updateAudition, deleteAudition } from "@/app/actions/auditions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Field } from "@/components/field";
-import { toLocalInput } from "@/lib/format";
+import { Field, selectClass } from "@/components/field";
+import { toLocalInput, relativeDays } from "@/lib/format";
 
 const STATUSES = ["submitted", "callback", "booked", "passed", "declined"] as const;
 
@@ -29,7 +29,7 @@ export default async function AuditionDetailPage({ params }: { params: Promise<{
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-extrabold">{audition.project_name}</h1>
+          <h1 className="font-display text-3xl">{audition.project_name}</h1>
           <p className="mt-1 text-muted">{audition.role_name}</p>
         </div>
         <form action={deleteAudition}>
@@ -38,13 +38,24 @@ export default async function AuditionDetailPage({ params }: { params: Promise<{
         </form>
       </div>
 
+      {audition.self_tape_deadline ? (
+        <div className="mt-6 flex items-center justify-between rounded-card bg-[var(--color-neutral-900)] p-5 text-background">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-accent-300)]">
+              Self-tape due
+            </p>
+            <p className="font-display text-2xl">{relativeDays(audition.self_tape_deadline)}</p>
+          </div>
+        </div>
+      ) : null}
+
       <form action={updateAudition} className="mt-8 grid gap-4 sm:grid-cols-2">
         <input type="hidden" name="id" value={audition.id} />
         <Field label="Project / show"><Input name="projectName" required defaultValue={audition.project_name} maxLength={200} /></Field>
         <Field label="Role"><Input name="roleName" required defaultValue={audition.role_name} maxLength={200} /></Field>
         <Field label="Casting office"><Input name="castingOffice" defaultValue={audition.casting_office ?? ""} maxLength={200} /></Field>
         <Field label="Status">
-          <select name="status" defaultValue={audition.status} className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+          <select name="status" defaultValue={audition.status} className={selectClass}>
             {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         </Field>
@@ -69,19 +80,19 @@ export default async function AuditionDetailPage({ params }: { params: Promise<{
         </Field>
 
         <Field label="Headshot sent">
-          <select name="headshotId" defaultValue={audition.headshot_id ?? ""} className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+          <select name="headshotId" defaultValue={audition.headshot_id ?? ""} className={selectClass}>
             <option value="">—</option>
             {headshots.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
           </select>
         </Field>
         <Field label="Resume sent">
-          <select name="resumeId" defaultValue={audition.resume_id ?? ""} className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+          <select name="resumeId" defaultValue={audition.resume_id ?? ""} className={selectClass}>
             <option value="">—</option>
             {resumes.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
           </select>
         </Field>
         <Field label="Reel sent">
-          <select name="reelId" defaultValue={audition.reel_id ?? ""} className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+          <select name="reelId" defaultValue={audition.reel_id ?? ""} className={selectClass}>
             <option value="">—</option>
             {reels.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
           </select>

@@ -1,16 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Caprasimo:wght@400&family=Figtree:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #fbf7ef;
-  --surface: #ffffff;
-  --foreground: #221a12;
+  /* Organic — cream paper, terracotta accent, sage as the sole secondary
+     color (reserved for "locked" / "booked" completed states). */
+  --background: #f5ead8;
+  --surface: #ebddc5;
+  --foreground: #201e1d;
   --muted: #6b6154;
-  --muted-surface: #f1e9db;
-  --border: #e6dbc8;
-  --accent: #b4530a;
-  --accent-foreground: #fffaf0;
-  --accent-soft: #f6e3c6;
-  --radius: 1rem;
+  --muted-surface: #eee7db;
+  --border: color-mix(in srgb, #201e1d 16%, transparent);
+
+  --accent: #c67139;
+  --accent-foreground: #f5ead8;
+  --accent-soft: #fff2eb;
+
+  --accent-2: #7a8a5e;
+  --accent-2-foreground: #f5ead8;
+  --accent-2-soft: #f0fae1;
+
+  --radius: 1.1rem;
+  --radius-pill: 999px;
+
+  --color-neutral-100: #f9f4ed;
+  --color-neutral-200: #eee7db;
+  --color-neutral-300: #dcd3c4;
+  --color-neutral-400: #c0b6a5;
+  --color-neutral-500: #a19786;
+  --color-neutral-600: #82796a;
+  --color-neutral-700: #645c50;
+  --color-neutral-800: #474238;
+  --color-neutral-900: #2e2b25;
+
+  --color-accent-100: #fff2eb;
+  --color-accent-200: #ffe1d0;
+  --color-accent-300: #ffc6a5;
+  --color-accent-400: #f6a06b;
+  --color-accent-500: #d67f48;
+  --color-accent-600: #b2622d;
+  --color-accent-700: #8c491a;
+  --color-accent-800: #643312;
+  --color-accent-900: #402310;
+
+  --color-accent-2-100: #f0fae1;
+  --color-accent-2-200: #e1eecc;
+  --color-accent-2-300: #ccdbb2;
+  --color-accent-2-400: #aebf92;
+  --color-accent-2-500: #8fa073;
+  --color-accent-2-600: #728157;
+  --color-accent-2-700: #56633f;
+  --color-accent-2-800: #3d472b;
+  --color-accent-2-900: #272e1b;
+
+  --font-display: "Caprasimo", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Figtree", ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme inline {
@@ -23,6 +66,25 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-soft: var(--accent-soft);
+  --color-accent-2: var(--accent-2);
+  --color-accent-2-foreground: var(--accent-2-foreground);
+  --color-accent-2-soft: var(--accent-2-soft);
+
+  --color-neutral-100: var(--color-neutral-100);
+  --color-neutral-200: var(--color-neutral-200);
+  --color-neutral-300: var(--color-neutral-300);
+  --color-neutral-400: var(--color-neutral-400);
+  --color-neutral-500: var(--color-neutral-500);
+  --color-neutral-600: var(--color-neutral-600);
+  --color-neutral-700: var(--color-neutral-700);
+  --color-neutral-800: var(--color-neutral-800);
+  --color-neutral-900: var(--color-neutral-900);
+
+  --color-accent-2-100: var(--color-accent-2-100);
+  --color-accent-2-200: var(--color-accent-2-200);
+  --color-accent-2-700: var(--color-accent-2-700);
+  --color-accent-2-800: var(--color-accent-2-800);
+
   --radius-card: var(--radius);
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
@@ -31,11 +93,18 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
 }
 
 .font-display {
-  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
 }
 
 /* A rare, deliberate texture accent for section dividers — never used as a
@@ -49,4 +118,28 @@ body {
     transparent 6px,
     transparent 14px
   );
+}
+
+/* Sprocket-hole dividers — the film-stock motif, used sparingly (at most
+   once per screen) between sections. */
+.sprocket-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.sprocket-divider .holes {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.sprocket-divider .hole {
+  width: 6px;
+  height: 11px;
+  border-radius: 2px;
+  background: var(--color-neutral-400);
+}
+.sprocket-divider .line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
 }

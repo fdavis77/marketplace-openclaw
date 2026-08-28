@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Field } from "@/components/field";
+import { Field, selectClass } from "@/components/field";
 import { formatDate, toDateInput, relativeDays } from "@/lib/format";
 
 const STAGES = ["idea", "outline", "drafting", "revision", "polish", "locked", "in_production", "delivered"] as const;
@@ -23,11 +23,11 @@ const SCENE_STATUSES = ["needs_work", "drafted", "revised", "locked"] as const;
 const SUBMISSION_STATUSES = ["submitted", "pending", "rejected", "accepted"] as const;
 const SUBMISSION_TYPES = ["competition", "festival", "agent", "producer", "other"] as const;
 
-const sceneBadge: Record<string, "outline" | "default" | "solid" | "warning"> = {
-  needs_work: "warning",
+const sceneBadge: Record<string, "outline" | "default" | "accent2" | "solid2"> = {
+  needs_work: "default",
   drafted: "outline",
-  revised: "default",
-  locked: "solid",
+  revised: "accent2",
+  locked: "solid2",
 };
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -52,7 +52,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-extrabold">{project.title}</h1>
+          <h1 className="font-display text-3xl">{project.title}</h1>
           {project.logline ? <p className="mt-2 max-w-xl text-muted">{project.logline}</p> : null}
         </div>
         <form action={deleteProject}>
@@ -61,13 +61,13 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </form>
       </div>
 
-      <details className="mt-6 rounded-card border border-border bg-surface p-4">
+      <details className="mt-6 rounded-card bg-surface p-4">
         <summary className="cursor-pointer text-sm font-medium text-accent">Edit project details</summary>
         <form action={updateProject} className="mt-4 grid gap-3 sm:grid-cols-2">
           <input type="hidden" name="id" value={project.id} />
           <Field label="Title"><Input name="title" required defaultValue={project.title} maxLength={200} /></Field>
           <Field label="Format">
-            <select name="format" defaultValue={project.format} className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+            <select name="format" defaultValue={project.format} className={selectClass}>
               <option value="short">Short</option>
               <option value="feature">Feature</option>
               <option value="pilot">Pilot</option>
@@ -76,7 +76,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             </select>
           </Field>
           <Field label="Stage">
-            <select name="stage" defaultValue={project.stage} className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+            <select name="stage" defaultValue={project.stage} className={selectClass}>
               {STAGES.map((s) => (
                 <option key={s} value={s}>{s.replace("_", " ")}</option>
               ))}
@@ -92,17 +92,17 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
       <section className="mt-10">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-xl font-bold">Scenes</h2>
+          <h2 className="font-display text-xl">Scenes</h2>
           <Badge variant="outline">{scenes?.length ?? 0}</Badge>
         </div>
-        <details className="mt-3 rounded-card border border-border bg-surface p-4">
+        <details className="mt-3 rounded-card bg-surface p-4">
           <summary className="cursor-pointer text-sm font-medium text-accent">+ Add scene</summary>
           <form action={createScene} className="mt-3 grid gap-3 sm:grid-cols-[80px_1fr_140px]">
             <input type="hidden" name="projectId" value={project.id} />
             <Field label="#"><Input name="sceneNumber" type="number" min={1} required defaultValue={(scenes?.length ?? 0) + 1} /></Field>
             <Field label="Heading"><Input name="heading" placeholder="INT. LOCATION - DAY" maxLength={200} /></Field>
             <Field label="Status">
-              <select name="status" defaultValue="needs_work" className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+              <select name="status" defaultValue="needs_work" className={selectClass}>
                 {SCENE_STATUSES.map((s) => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
               </select>
             </Field>
@@ -113,7 +113,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
         <div className="mt-4 flex flex-col gap-2">
           {scenes?.map((scene) => (
-            <details key={scene.id} className="rounded-card border border-border bg-surface p-3">
+            <details key={scene.id} className="rounded-card bg-surface p-3">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-2">
                 <span className="text-sm">
                   <span className="font-mono text-muted">#{scene.scene_number}</span>{" "}
@@ -127,7 +127,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 <input type="hidden" name="projectId" value={project.id} />
                 <Input name="sceneNumber" type="number" min={1} required defaultValue={scene.scene_number} />
                 <Input name="heading" defaultValue={scene.heading} maxLength={200} />
-                <select name="status" defaultValue={scene.status} className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+                <select name="status" defaultValue={scene.status} className={selectClass}>
                   {SCENE_STATUSES.map((s) => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
                 </select>
                 <Textarea name="notes" defaultValue={scene.notes ?? ""} maxLength={2000} className="sm:col-span-3" />
@@ -147,23 +147,23 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
       <section className="mt-10">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-xl font-bold">Submissions</h2>
+          <h2 className="font-display text-xl">Submissions</h2>
           <Badge variant="outline">{submissions?.length ?? 0}</Badge>
         </div>
-        <details className="mt-3 rounded-card border border-border bg-surface p-4">
+        <details className="mt-3 rounded-card bg-surface p-4">
           <summary className="cursor-pointer text-sm font-medium text-accent">+ Add submission</summary>
           <form action={createSubmission} className="mt-3 grid gap-3 sm:grid-cols-2">
             <input type="hidden" name="projectId" value={project.id} />
             <Field label="Where"><Input name="targetName" required maxLength={200} placeholder="Competition, agent, or producer" /></Field>
             <Field label="Type">
-              <select name="targetType" defaultValue="other" className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+              <select name="targetType" defaultValue="other" className={selectClass}>
                 {SUBMISSION_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
             </Field>
             <Field label="Submitted"><Input name="submittedAt" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} /></Field>
             <Field label="Response due (optional)"><Input name="responseDueAt" type="date" /></Field>
             <Field label="Status">
-              <select name="status" defaultValue="submitted" className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+              <select name="status" defaultValue="submitted" className={selectClass}>
                 {SUBMISSION_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </Field>
@@ -174,7 +174,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
         <div className="mt-4 flex flex-col gap-2">
           {submissions?.map((sub) => (
-            <details key={sub.id} className="rounded-card border border-border bg-surface p-3">
+            <details key={sub.id} className="rounded-card bg-surface p-3">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-2">
                 <span className="text-sm font-medium">{sub.target_name}</span>
                 <div className="flex items-center gap-2">
@@ -193,12 +193,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 <input type="hidden" name="id" value={sub.id} />
                 <input type="hidden" name="projectId" value={project.id} />
                 <Input name="targetName" required defaultValue={sub.target_name} maxLength={200} />
-                <select name="targetType" defaultValue={sub.target_type} className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+                <select name="targetType" defaultValue={sub.target_type} className={selectClass}>
                   {SUBMISSION_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
                 <Input name="submittedAt" type="date" required defaultValue={toDateInput(sub.submitted_at)} />
                 <Input name="responseDueAt" type="date" defaultValue={sub.response_due_at ? toDateInput(sub.response_due_at) : ""} />
-                <select name="status" defaultValue={sub.status} className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+                <select name="status" defaultValue={sub.status} className={selectClass}>
                   {SUBMISSION_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
                 <Textarea name="notes" defaultValue={sub.notes ?? ""} maxLength={2000} className="sm:col-span-2" />

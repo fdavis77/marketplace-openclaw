@@ -9,7 +9,7 @@ export default function AboutPage() {
         <span className="inline-flex items-center rounded-full bg-accent-soft px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
           Founder
         </span>
-        <h1 className="font-display mt-4 text-4xl font-extrabold tracking-tight">Aysha Scott</h1>
+        <h1 className="font-display mt-4 text-4xl tracking-tight">Aysha Scott</h1>
         <p className="mt-2 text-muted">Independent filmmaker · Deptford, South London</p>
       </div>
 

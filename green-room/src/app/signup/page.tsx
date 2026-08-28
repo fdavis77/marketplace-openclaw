@@ -22,7 +22,7 @@ export default function SignupPage() {
   return (
     <div className="mx-auto flex max-w-md flex-col gap-6 px-4 py-16">
       <div className="text-center">
-        <h1 className="font-display text-3xl font-extrabold">Set up your planner</h1>
+        <h1 className="font-display text-3xl">Set up your planner</h1>
         <p className="mt-2 text-muted">Free. Takes less than a minute.</p>
       </div>
       <Card>
@@ -57,7 +57,7 @@ export default function SignupPage() {
               {ROLE_OPTIONS.map((role) => (
                 <label
                   key={role.value}
-                  className="flex items-start gap-3 rounded-lg border border-border p-3 text-sm hover:border-accent"
+                  className="flex items-start gap-3 rounded-2xl border border-border p-3 text-sm hover:border-accent"
                 >
                   <input type="checkbox" name="roles" value={role.value} className="mt-0.5" />
                   <span>

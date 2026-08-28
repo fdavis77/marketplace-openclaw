@@ -21,12 +21,13 @@ export default async function HomePage() {
   if (!profile) {
     return (
       <div className="mx-auto flex max-w-3xl flex-col gap-8 px-4 py-24 text-center sm:px-6">
-        <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
-          One planner for the whole job of making a screen career happen.
+        <h1 className="font-display text-4xl sm:text-5xl">
+          The planner that knows the work.
         </h1>
         <p className="mx-auto max-w-xl text-lg text-muted">
-          Track scripts from idea to submission, log your writing pages, and run your audition
-          pipeline — sides, self-tapes, availability, and materials — all in one place, private to you.
+          Deadlines, drafts, self-tapes, and submissions — every role you play, in one private
+          notebook. Track scripts from idea to submission, log your writing pages, and run your
+          audition pipeline, all in one place.
         </p>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button size="lg" asChild>
@@ -155,43 +156,82 @@ export default async function HomePage() {
 
   upcoming.sort((a, b) => new Date(a.when).getTime() - new Date(b.when).getTime());
 
+  const roleLabels: Record<string, string> = {
+    writer: "Writer",
+    director: "Director",
+    producer: "Producer",
+    editor: "Editor",
+    actor: "Actor",
+  };
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <h1 className="font-display text-3xl font-extrabold">Welcome back, {profile.display_name.split(" ")[0]}</h1>
+      <h1 className="font-display text-3xl">Morning, {profile.display_name.split(" ")[0]}.</h1>
       <p className="mt-2 text-muted">Here&rsquo;s what needs your attention.</p>
 
+      {roles.length ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {roles.map((r) => (
+            <Badge key={r} variant="solid">{roleLabels[r] ?? r}</Badge>
+          ))}
+        </div>
+      ) : null}
+
       <section className="mt-8">
-        <h2 className="font-display text-xl font-bold">Coming up</h2>
-        <div className="mt-4 flex flex-col gap-2">
+        <h2 className="font-display text-xl">Coming up · next 14 days</h2>
+        <div className="mt-4 flex flex-col gap-3">
           {upcoming.length ? (
-            upcoming.slice(0, 8).map((item) => (
-              <Link
-                key={item.id}
-                href={item.href}
-                className="flex items-center justify-between gap-4 rounded-card border border-border bg-surface p-4 hover:border-accent"
-              >
-                <div>
-                  <p className="font-medium">{item.label}</p>
-                  <p className="text-sm text-muted">{item.detail}</p>
-                </div>
-                <div className="text-right">
-                  <Badge variant={isPastDeadlineBadge(item.when)}>{relativeDays(item.when)}</Badge>
-                  <p className="mt-1 text-xs text-muted">
-                    {item.when.length > 10 ? formatDateTime(item.when) : formatDate(item.when)}
-                  </p>
-                </div>
-              </Link>
-            ))
+            upcoming.slice(0, 8).map((item) => {
+              const past = isPastDeadlineBadge(item.when) === "warning";
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={`flex items-start gap-4 rounded-card p-4 transition-colors ${
+                    past ? "bg-[var(--color-neutral-900)] text-background" : "bg-surface hover:bg-[var(--color-neutral-200)]"
+                  }`}
+                >
+                  <div className="flex w-14 flex-none flex-col items-center">
+                    <span
+                      className={`text-[10px] font-bold uppercase tracking-wider ${
+                        past ? "text-[var(--color-accent-300)]" : "text-muted"
+                      }`}
+                    >
+                      {item.when.length > 10 ? formatDateTime(item.when).split(",")[0] : formatDate(item.when)}
+                    </span>
+                  </div>
+                  <div className={`w-px self-stretch ${past ? "bg-white/15" : "bg-border"}`} />
+                  <div className="flex flex-1 flex-col gap-0.5">
+                    <span
+                      className={`text-[10px] font-bold uppercase tracking-wider ${
+                        past ? "text-[var(--color-accent-300)]" : "text-accent"
+                      }`}
+                    >
+                      {item.detail}
+                    </span>
+                    <span className="text-base font-semibold">{item.label}</span>
+                    <span className={`text-xs ${past ? "text-[var(--color-neutral-400)]" : "text-muted"}`}>
+                      {relativeDays(item.when)}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })
           ) : (
-            <p className="rounded-card border border-dashed border-border p-8 text-center text-muted">
+            <p className="rounded-card border border-dashed border-[var(--color-neutral-400)] p-8 text-center text-muted">
               Nothing on the horizon — that&rsquo;s either great, or a sign to add a deadline.
             </p>
           )}
         </div>
       </section>
 
+      <div className="sprocket-divider my-10">
+        <div className="holes"><span className="hole" /><span className="hole" /><span className="hole" /></div>
+        <div className="line" />
+      </div>
+
       {!roles.length ? (
-        <div className="mt-10 rounded-card border border-border bg-accent-soft p-6">
+        <div className="rounded-card bg-accent-soft p-6">
           <p className="font-medium">You haven&rsquo;t picked a role yet.</p>
           <p className="mt-1 text-sm text-muted">
             Head to your account to choose writer, director, producer, editor, and/or actor — that&rsquo;s what turns on the
@@ -202,7 +242,7 @@ export default async function HomePage() {
           </Button>
         </div>
       ) : (
-        <div className="mt-10 grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {isWriter ? (
             <>
               <Card>

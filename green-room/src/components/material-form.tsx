@@ -4,7 +4,7 @@ import { useActionState, useRef } from "react";
 import { addMaterial, type MaterialState } from "@/app/actions/materials";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Field } from "@/components/field";
+import { Field, selectClass } from "@/components/field";
 
 export function MaterialForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -20,7 +20,7 @@ export function MaterialForm() {
   return (
     <form ref={formRef} action={action} className="mt-4 grid gap-3 sm:grid-cols-2">
       <Field label="Type">
-        <select name="type" defaultValue="headshot" className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+        <select name="type" defaultValue="headshot" className={selectClass}>
           <option value="headshot">Headshot</option>
           <option value="reel">Reel</option>
           <option value="resume">Resume</option>
