@@ -9,7 +9,7 @@ export type AccountState = { error?: string; success?: boolean } | undefined;
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
-const roleEnum = z.enum(["writer", "director", "actor"]);
+const roleEnum = z.enum(["writer", "director", "producer", "editor", "actor"]);
 
 const schema = z.object({
   displayName: z.string().trim().min(2, "Name must be at least 2 characters.").max(80),

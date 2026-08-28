@@ -16,9 +16,9 @@ const displayFont = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "The Green Room — a planner for screen creatives",
+  title: "Filmmaking Planner",
   description:
-    "Track scripts, scenes, and submissions as a writer or director; run your audition pipeline, self-tapes, availability, and materials as an actor.",
+    "Track scripts, scenes, and submissions as a writer, director, or producer; run your audition pipeline, self-tapes, availability, and materials as an actor. By Aysha Scott.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

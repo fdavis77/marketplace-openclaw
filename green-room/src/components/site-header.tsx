@@ -19,7 +19,7 @@ export async function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <Link href="/" className="font-display text-lg font-extrabold tracking-tight">
-          The Green Room
+          Filmmaking Planner
         </Link>
 
         {profile ? (
@@ -30,7 +30,11 @@ export async function SiteHeader() {
               </Link>
             ))}
           </nav>
-        ) : null}
+        ) : (
+          <nav className="hidden items-center gap-5 text-sm font-medium md:flex">
+            <Link href="/about" className="hover:text-accent">About</Link>
+          </nav>
+        )}
 
         <div className="flex items-center gap-2">
           {profile ? (

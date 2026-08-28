@@ -11,6 +11,8 @@ import type { Profile } from "@/lib/dal";
 const ROLE_OPTIONS = [
   { value: "writer", label: "Writer" },
   { value: "director", label: "Director" },
+  { value: "producer", label: "Producer" },
+  { value: "editor", label: "Editor" },
   { value: "actor", label: "Actor" },
 ] as const;
 

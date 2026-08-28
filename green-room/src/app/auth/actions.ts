@@ -10,7 +10,7 @@ export type FormState = { error?: string; sent?: boolean } | undefined;
 const emailSchema = z.email();
 const passwordSchema = z.string().min(8, "Password must be at least 8 characters.");
 
-const roleEnum = z.enum(["writer", "director", "actor"]);
+const roleEnum = z.enum(["writer", "director", "producer", "editor", "actor"]);
 
 const signupSchema = z.object({
   displayName: z.string().trim().min(2, "Name must be at least 2 characters.").max(80),

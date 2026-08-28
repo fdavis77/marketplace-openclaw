@@ -36,6 +36,10 @@ export default async function HomePage() {
             <Link href="/login">Sign in</Link>
           </Button>
         </div>
+        <p className="text-sm text-muted">
+          Built by <Link href="/about" className="font-medium text-accent hover:underline">Aysha Scott</Link>,
+          independent filmmaker and founder of Filmmaking Planner.
+        </p>
         <div className="mx-auto mt-6 grid max-w-2xl gap-4 text-left sm:grid-cols-2">
           <Card>
             <CardHeader>
@@ -64,7 +68,11 @@ export default async function HomePage() {
 
   const supabase = await createClient();
   const roles = profile.creative_roles ?? [];
-  const isWriter = roles.includes("writer") || roles.includes("director");
+  const isWriter =
+    roles.includes("writer") ||
+    roles.includes("director") ||
+    roles.includes("producer") ||
+    roles.includes("editor");
   const isActor = roles.includes("actor");
 
   const [{ data: projects }, { data: auditions }] = await Promise.all([
@@ -186,7 +194,7 @@ export default async function HomePage() {
         <div className="mt-10 rounded-card border border-border bg-accent-soft p-6">
           <p className="font-medium">You haven&rsquo;t picked a role yet.</p>
           <p className="mt-1 text-sm text-muted">
-            Head to your account to choose writer, director, and/or actor — that&rsquo;s what turns on the
+            Head to your account to choose writer, director, producer, editor, and/or actor — that&rsquo;s what turns on the
             sections below.
           </p>
           <Button asChild size="sm" className="mt-3">
