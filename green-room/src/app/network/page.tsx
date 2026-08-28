@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Users, MessageCircle, ArrowUpRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/dal";
 import { startConversation } from "@/app/actions/network";
@@ -28,7 +29,10 @@ export default async function NetworkPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-      <h1 className="font-display text-3xl">Network</h1>
+      <h1 className="flex items-center gap-2 font-display text-3xl">
+        <Users className="h-5 w-5 text-accent" />
+        Network
+      </h1>
       <p className="mt-2 text-muted">
         Find writers, directors, actors, and crew across the industry — gaffers, sound, composers,
         and more. Your projects, goals, and auditions stay private; only what you opt in on your{" "}
@@ -40,7 +44,10 @@ export default async function NetworkPage({
           <Card className="hover:shadow-md">
             <CardHeader>
               <Badge variant="accent2">Learn</Badge>
-              <CardTitle className="text-base">Aysha&rsquo;s filmmaking course →</CardTitle>
+              <CardTitle className="flex items-center gap-1 text-base">
+                Aysha&rsquo;s filmmaking course
+                <ArrowUpRight className="h-4 w-4" />
+              </CardTitle>
               <CardDescription>Go deeper on the craft and the business side.</CardDescription>
             </CardHeader>
           </Card>
@@ -49,7 +56,10 @@ export default async function NetworkPage({
           <Card className="hover:shadow-md">
             <CardHeader>
               <Badge variant="outline">Shop</Badge>
-              <CardTitle className="text-base">Filmmaking Planner store →</CardTitle>
+              <CardTitle className="flex items-center gap-1 text-base">
+                Filmmaking Planner store
+                <ArrowUpRight className="h-4 w-4" />
+              </CardTitle>
               <CardDescription>Paper planners and stationery for the set.</CardDescription>
             </CardHeader>
           </Card>
@@ -82,14 +92,20 @@ export default async function NetworkPage({
             </CardHeader>
             <form action={startConversation} className="px-6 pb-6">
               <input type="hidden" name="otherUserId" value={person.id} />
-              <Button type="submit" size="sm" variant="outline">Message</Button>
+              <Button type="submit" size="sm" variant="outline">
+                <MessageCircle className="h-4 w-4" />
+                Message
+              </Button>
             </form>
           </Card>
         ))}
         {!people?.length ? (
-          <p className="text-muted sm:col-span-2 lg:col-span-3">
-            {role ? "Nobody in the directory has that role yet." : "Nobody has joined the directory yet — be the first from your account page."}
-          </p>
+          <div className="flex flex-col items-center gap-2 py-10 text-center sm:col-span-2 lg:col-span-3">
+            <Users className="h-10 w-10 text-muted" />
+            <p className="text-muted">
+              {role ? "Nobody in the directory has that role yet." : "Nobody has joined the directory yet — be the first from your account page."}
+            </p>
+          </div>
         ) : null}
       </div>
     </div>

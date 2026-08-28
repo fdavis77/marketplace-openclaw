@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Plus, CalendarDays, Clapperboard } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/dal";
 import { createProject } from "@/app/actions/projects";
@@ -36,7 +37,9 @@ export default async function ProjectsPage() {
       <p className="mt-2 text-muted">Every script, from idea to delivered.</p>
 
       <details className="mt-8 rounded-card bg-surface p-4">
-        <summary className="cursor-pointer font-display">+ New project</summary>
+        <summary className="flex cursor-pointer items-center gap-1.5 font-display">
+          <Plus className="h-4 w-4" /> New project
+        </summary>
         <form action={createProject} className="mt-4 grid gap-3 sm:grid-cols-2">
           <Field label="Title"><Input name="title" required maxLength={200} /></Field>
           <Field label="Format">
@@ -75,15 +78,18 @@ export default async function ProjectsPage() {
                   {project.logline ? <CardDescription>{project.logline}</CardDescription> : null}
                 </CardHeader>
                 {project.target_deadline ? (
-                  <CardContent className="text-sm text-muted">
-                    Target: {formatDate(project.target_deadline)}
+                  <CardContent className="flex items-center gap-1.5 text-sm text-muted">
+                    <CalendarDays className="h-4 w-4" /> Target: {formatDate(project.target_deadline)}
                   </CardContent>
                 ) : null}
               </Card>
             </Link>
           ))
         ) : (
-          <p className="text-muted">No projects yet — add your first one above.</p>
+          <div className="col-span-full flex flex-col items-center gap-3 py-8 text-center text-muted">
+            <Clapperboard className="h-10 w-10 text-[var(--color-neutral-400)]" />
+            <p>No projects yet — add your first one above.</p>
+          </div>
         )}
       </div>
     </div>

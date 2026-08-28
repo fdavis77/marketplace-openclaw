@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { differenceInHours } from "date-fns";
+import { Plus, CalendarDays } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/dal";
 import { createAudition } from "@/app/actions/auditions";
@@ -40,7 +41,8 @@ function AuditionCard({ audition, now }: { audition: Tables<"auditions">; now: D
         {nextDate ? (
           <>
             <div className={`h-px ${urgent || booked ? "bg-white/20" : "bg-border"}`} />
-            <p className={`text-xs ${urgent || booked ? "opacity-70" : "text-muted"}`}>
+            <p className={`flex items-center gap-1.5 text-xs ${urgent || booked ? "opacity-70" : "text-muted"}`}>
+              <CalendarDays className="h-4 w-4" />
               {audition.self_tape_deadline ? "Self-tape due" : audition.callback_date ? "Callback" : "Audition"}
               {" · "}
               {relativeDays(nextDate)}
@@ -68,7 +70,9 @@ export default async function AuditionsPage() {
       <p className="mt-2 text-muted">Your pipeline, submitted to booked.</p>
 
       <details className="mt-8 rounded-card bg-surface p-4">
-        <summary className="cursor-pointer font-display">+ New audition</summary>
+        <summary className="flex cursor-pointer items-center gap-1.5 font-display">
+          <Plus className="h-4 w-4" /> New audition
+        </summary>
         <form action={createAudition} className="mt-4 grid gap-3 sm:grid-cols-2">
           <Field label="Project / show"><Input name="projectName" required maxLength={200} /></Field>
           <Field label="Role"><Input name="roleName" required maxLength={200} /></Field>

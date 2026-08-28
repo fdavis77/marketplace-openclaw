@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Trash2, CalendarDays } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/dal";
 import { updateAudition, deleteAudition } from "@/app/actions/auditions";
@@ -34,7 +35,9 @@ export default async function AuditionDetailPage({ params }: { params: Promise<{
         </div>
         <form action={deleteAudition}>
           <input type="hidden" name="id" value={audition.id} />
-          <Button type="submit" variant="ghost" size="sm">Delete</Button>
+          <Button type="submit" variant="ghost" size="sm">
+            <Trash2 className="h-4 w-4" /> Delete
+          </Button>
         </form>
       </div>
 
@@ -46,6 +49,7 @@ export default async function AuditionDetailPage({ params }: { params: Promise<{
             </p>
             <p className="font-display text-2xl">{relativeDays(audition.self_tape_deadline)}</p>
           </div>
+          <CalendarDays className="h-6 w-6 flex-none text-[var(--color-accent-300)]" />
         </div>
       ) : null}
 

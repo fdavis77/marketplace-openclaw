@@ -1,4 +1,5 @@
 import { subDays } from "date-fns";
+import { Plus, Trash2, Target } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/dal";
 import { upsertGoal, logSession, deleteSession } from "@/app/actions/goals";
@@ -72,7 +73,9 @@ export default async function GoalsPage() {
       ) : null}
 
       <div className="mt-6 flex items-center justify-between rounded-card bg-surface p-5">
-        <span className="font-display text-lg">Streak</span>
+        <span className="flex items-center gap-2 font-display text-lg">
+          <Target className="h-5 w-5 text-accent" /> Streak
+        </span>
         <span className="text-sm font-semibold text-[var(--color-accent-2-700)]">{streak} {streak === 1 ? "day" : "days"}</span>
       </div>
       <div className="mt-2 flex justify-between gap-1">
@@ -99,7 +102,9 @@ export default async function GoalsPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardDescription>Target</CardDescription>
+            <CardDescription className="flex items-center gap-1.5">
+              <Target className="h-4 w-4" /> Target
+            </CardDescription>
             <CardTitle className="text-2xl">
               {goal ? `${goal.target_amount} ${goal.unit}/${goal.cadence === "daily" ? "day" : "week"}` : "Not set"}
             </CardTitle>
@@ -108,7 +113,9 @@ export default async function GoalsPage() {
       </div>
 
       <details className="mt-8 rounded-card bg-surface p-4">
-        <summary className="cursor-pointer font-display">Set your target</summary>
+        <summary className="flex cursor-pointer items-center gap-1.5 font-display">
+          <Target className="h-4 w-4" /> Set your target
+        </summary>
         <form action={upsertGoal} className="mt-4 grid gap-3 sm:grid-cols-3">
           <Field label="Cadence">
             <select name="cadence" defaultValue={goal?.cadence ?? "daily"} className={selectClass}>
@@ -130,7 +137,9 @@ export default async function GoalsPage() {
       </details>
 
       <details className="mt-4 rounded-card bg-surface p-4">
-        <summary className="cursor-pointer font-display">+ Log a session</summary>
+        <summary className="flex cursor-pointer items-center gap-1.5 font-display">
+          <Plus className="h-4 w-4" /> Log a session
+        </summary>
         <form action={logSession} className="mt-4 grid gap-3 sm:grid-cols-2">
           <Field label="Date">
             <Input name="sessionDate" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} />
@@ -167,12 +176,17 @@ export default async function GoalsPage() {
               </div>
               <form action={deleteSession}>
                 <input type="hidden" name="id" value={s.id} />
-                <Button type="submit" size="sm" variant="ghost">Delete</Button>
+                <Button type="submit" size="sm" variant="ghost">
+                  <Trash2 className="h-4 w-4" /> Delete
+                </Button>
               </form>
             </div>
           ))
         ) : (
-          <p className="text-muted">No sessions logged yet.</p>
+          <div className="flex flex-col items-center gap-3 py-8 text-center text-muted">
+            <Target className="h-10 w-10 text-[var(--color-neutral-400)]" />
+            <p>No sessions logged yet.</p>
+          </div>
         )}
       </div>
     </div>

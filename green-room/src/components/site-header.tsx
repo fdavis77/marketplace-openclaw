@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { User, LogOut } from "lucide-react";
 import { getCurrentUser } from "@/lib/dal";
 import { signOut } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
@@ -18,9 +19,9 @@ function Wordmark() {
   return (
     <span className="inline-flex items-center gap-2.5">
       <span className="flex h-7 w-7 flex-none flex-col justify-evenly rounded-lg bg-accent py-1.5 pl-1.5">
-        <span className="h-[3px] w-1.5 rounded-sm bg-accent-foreground" />
-        <span className="h-[3px] w-1.5 rounded-sm bg-accent-foreground" />
-        <span className="h-[3px] w-1.5 rounded-sm bg-accent-foreground" />
+        <span className="h-[3px] w-1.5 rounded-sm bg-background" />
+        <span className="h-[3px] w-1.5 rounded-sm bg-background" />
+        <span className="h-[3px] w-1.5 rounded-sm bg-background" />
       </span>
       <span className="font-display text-base">Filmmaking Planner</span>
     </span>
@@ -61,14 +62,19 @@ export async function SiteHeader() {
                 {profile.display_name}
               </summary>
               <div className="absolute right-0 z-50 mt-2 w-48 rounded-2xl bg-surface p-1 shadow-lg">
-                <Link href="/account" className="block rounded-xl px-3 py-2 text-sm hover:bg-muted-surface">
+                <Link
+                  href="/account"
+                  className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-muted-surface"
+                >
+                  <User className="h-4 w-4" />
                   Account
                 </Link>
                 <form action={signOut}>
                   <button
                     type="submit"
-                    className="block w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-muted-surface"
+                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm hover:bg-muted-surface"
                   >
+                    <LogOut className="h-4 w-4" />
                     Sign out
                   </button>
                 </form>

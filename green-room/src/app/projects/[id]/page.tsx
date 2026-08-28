@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Plus, Trash2, Pencil, Target, ChevronDown } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/dal";
 import {
@@ -70,12 +71,16 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </div>
         <form action={deleteProject}>
           <input type="hidden" name="id" value={project.id} />
-          <Button type="submit" variant="ghost" size="sm">Delete project</Button>
+          <Button type="submit" variant="ghost" size="sm">
+            <Trash2 className="h-4 w-4" /> Delete project
+          </Button>
         </form>
       </div>
 
       <details className="mt-6 rounded-card bg-surface p-4">
-        <summary className="cursor-pointer text-sm font-medium text-accent">Edit project details</summary>
+        <summary className="flex cursor-pointer items-center gap-1.5 text-sm font-medium text-accent">
+          <Pencil className="h-4 w-4" /> Edit project details
+        </summary>
         <form action={updateProject} className="mt-4 grid gap-3 sm:grid-cols-2">
           <input type="hidden" name="id" value={project.id} />
           <Field label="Title"><Input name="title" required defaultValue={project.title} maxLength={200} /></Field>
@@ -105,7 +110,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
       <section className="mt-10">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-xl">90-day challenge</h2>
+          <h2 className="flex items-center gap-2 font-display text-xl">
+            <Target className="h-5 w-5 text-accent" /> 90-day challenge
+          </h2>
           {challengeDay ? (
             <Badge variant="accent2">Day {challengeDay} of 90</Badge>
           ) : null}
@@ -119,7 +126,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             </p>
             <form action={startChallenge}>
               <input type="hidden" name="projectId" value={project.id} />
-              <Button type="submit" size="sm">Start the challenge</Button>
+              <Button type="submit" size="sm">
+                <Plus className="h-4 w-4" /> Start the challenge
+              </Button>
             </form>
           </div>
         ) : (
@@ -167,7 +176,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             <p className="text-sm text-muted">Generate a starter beat sheet to plan your structure.</p>
             <form action={generateBeatSheet}>
               <input type="hidden" name="projectId" value={project.id} />
-              <Button type="submit" size="sm">Generate beat sheet</Button>
+              <Button type="submit" size="sm">
+                <Plus className="h-4 w-4" /> Generate beat sheet
+              </Button>
             </form>
           </div>
         ) : (
@@ -202,7 +213,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <Badge variant="outline">{scenes?.length ?? 0}</Badge>
         </div>
         <details className="mt-3 rounded-card bg-surface p-4">
-          <summary className="cursor-pointer text-sm font-medium text-accent">+ Add scene</summary>
+          <summary className="flex cursor-pointer items-center gap-1.5 text-sm font-medium text-accent">
+            <Plus className="h-4 w-4" /> Add scene
+          </summary>
           <form action={createScene} className="mt-3 grid gap-3 sm:grid-cols-[80px_1fr_140px]">
             <input type="hidden" name="projectId" value={project.id} />
             <Field label="#"><Input name="sceneNumber" type="number" min={1} required defaultValue={(scenes?.length ?? 0) + 1} /></Field>
@@ -219,13 +232,16 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
         <div className="mt-4 flex flex-col gap-2">
           {scenes?.map((scene) => (
-            <details key={scene.id} className="rounded-card bg-surface p-3">
+            <details key={scene.id} className="group rounded-card bg-surface p-3">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-2">
                 <span className="text-sm">
                   <span className="font-mono text-muted">#{scene.scene_number}</span>{" "}
                   <span className="font-medium">{scene.heading || "Untitled scene"}</span>
                 </span>
-                <Badge variant={sceneBadge[scene.status]}>{scene.status.replace("_", " ")}</Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant={sceneBadge[scene.status]}>{scene.status.replace("_", " ")}</Badge>
+                  <ChevronDown className="h-4 w-4 text-muted transition-transform group-open:rotate-180" />
+                </div>
               </summary>
               {scene.notes ? <p className="mt-2 text-sm text-muted">{scene.notes}</p> : null}
               <form action={updateScene} className="mt-3 grid gap-2 sm:grid-cols-[80px_1fr_140px]">
@@ -244,7 +260,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               <form action={deleteScene} className="mt-2">
                 <input type="hidden" name="id" value={scene.id} />
                 <input type="hidden" name="projectId" value={project.id} />
-                <Button type="submit" size="sm" variant="ghost">Delete scene</Button>
+                <Button type="submit" size="sm" variant="ghost">
+                  <Trash2 className="h-4 w-4" /> Delete scene
+                </Button>
               </form>
             </details>
           ))}
@@ -257,7 +275,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <Badge variant="outline">{submissions?.length ?? 0}</Badge>
         </div>
         <details className="mt-3 rounded-card bg-surface p-4">
-          <summary className="cursor-pointer text-sm font-medium text-accent">+ Add submission</summary>
+          <summary className="flex cursor-pointer items-center gap-1.5 text-sm font-medium text-accent">
+            <Plus className="h-4 w-4" /> Add submission
+          </summary>
           <form action={createSubmission} className="mt-3 grid gap-3 sm:grid-cols-2">
             <input type="hidden" name="projectId" value={project.id} />
             <Field label="Where"><Input name="targetName" required maxLength={200} placeholder="Competition, agent, or producer" /></Field>
@@ -280,7 +300,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
         <div className="mt-4 flex flex-col gap-2">
           {submissions?.map((sub) => (
-            <details key={sub.id} className="rounded-card bg-surface p-3">
+            <details key={sub.id} className="group rounded-card bg-surface p-3">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-2">
                 <span className="text-sm font-medium">{sub.target_name}</span>
                 <div className="flex items-center gap-2">
@@ -288,6 +308,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                   <Badge variant={sub.status === "accepted" ? "default" : sub.status === "rejected" ? "warning" : "outline"}>
                     {sub.status}
                   </Badge>
+                  <ChevronDown className="h-4 w-4 text-muted transition-transform group-open:rotate-180" />
                 </div>
               </summary>
               <p className="mt-2 text-xs text-muted">
@@ -313,7 +334,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               <form action={deleteSubmission} className="mt-2">
                 <input type="hidden" name="id" value={sub.id} />
                 <input type="hidden" name="projectId" value={project.id} />
-                <Button type="submit" size="sm" variant="ghost">Delete submission</Button>
+                <Button type="submit" size="sm" variant="ghost">
+                  <Trash2 className="h-4 w-4" /> Delete submission
+                </Button>
               </form>
             </details>
           ))}

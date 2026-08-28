@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -79,7 +80,10 @@ export default function AboutPage() {
 
       <div className="mt-10 text-center">
         <Button size="lg" asChild>
-          <Link href="/signup">Start planning your own work</Link>
+          <Link href="/signup">
+            Start planning your own work
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </Button>
       </div>
     </div>

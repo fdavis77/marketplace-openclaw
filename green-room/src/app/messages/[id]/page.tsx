@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/dal";
 import { MessageComposer } from "@/components/message-composer";
@@ -28,12 +29,18 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
     <div className="mx-auto flex max-w-2xl flex-col gap-4 px-4 py-12 sm:px-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <Link href="/messages" className="text-xs font-semibold text-muted">← Messages</Link>
+          <Link href="/messages" className="flex items-center gap-1 text-xs font-semibold text-muted">
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Messages
+          </Link>
           <h1 className="font-display text-2xl">{other?.display_name ?? "Conversation"}</h1>
         </div>
         {other?.meeting_url ? (
           <Button asChild size="sm" variant="outline">
-            <a href={other.meeting_url} target="_blank" rel="noopener noreferrer">Join call</a>
+            <a href={other.meeting_url} target="_blank" rel="noopener noreferrer">
+              Join call
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
           </Button>
         ) : null}
       </div>

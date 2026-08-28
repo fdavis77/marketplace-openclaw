@@ -108,6 +108,12 @@ h1, h2, h3, h4 {
   letter-spacing: -0.015em;
 }
 
+/* Identity spec: Lucide icons at a rounder, heavier stroke throughout —
+   set once here so every <Icon /> import doesn't need strokeWidth repeated. */
+svg.lucide {
+  stroke-width: 2.75;
+}
+
 /* A rare, deliberate texture accent for section dividers — never used as a
    full-page background. */
 .grain-divider {

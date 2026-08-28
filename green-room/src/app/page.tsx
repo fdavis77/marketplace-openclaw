@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CalendarDays, ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/dal";
 import { Button } from "@/components/ui/button";
@@ -177,7 +178,9 @@ export default async function HomePage() {
       ) : null}
 
       <section className="mt-8">
-        <h2 className="font-display text-xl">Coming up · next 14 days</h2>
+        <h2 className="flex items-center gap-2 font-display text-xl">
+          <CalendarDays className="h-5 w-5 text-accent" /> Coming up · next 14 days
+        </h2>
         <div className="mt-4 flex flex-col gap-3">
           {upcoming.length ? (
             upcoming.slice(0, 8).map((item) => {
@@ -217,9 +220,10 @@ export default async function HomePage() {
               );
             })
           ) : (
-            <p className="rounded-card border border-dashed border-[var(--color-neutral-400)] p-8 text-center text-muted">
-              Nothing on the horizon — that&rsquo;s either great, or a sign to add a deadline.
-            </p>
+            <div className="flex flex-col items-center gap-3 rounded-card border border-dashed border-[var(--color-neutral-400)] p-8 text-center text-muted">
+              <CalendarDays className="h-10 w-10 text-[var(--color-neutral-400)]" />
+              <p>Nothing on the horizon — that&rsquo;s either great, or a sign to add a deadline.</p>
+            </div>
           )}
         </div>
       </section>
@@ -251,7 +255,9 @@ export default async function HomePage() {
                 </CardHeader>
                 <CardContent>
                   <Button asChild size="sm" variant="outline">
-                    <Link href="/projects">Open projects →</Link>
+                    <Link href="/projects">
+                      Open projects <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -262,7 +268,9 @@ export default async function HomePage() {
                 </CardHeader>
                 <CardContent>
                   <Button asChild size="sm" variant="outline">
-                    <Link href="/goals">Open goals →</Link>
+                    <Link href="/goals">
+                      Open goals <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -277,7 +285,9 @@ export default async function HomePage() {
                 </CardHeader>
                 <CardContent>
                   <Button asChild size="sm" variant="outline">
-                    <Link href="/auditions">Open pipeline →</Link>
+                    <Link href="/auditions">
+                      Open pipeline <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -288,10 +298,14 @@ export default async function HomePage() {
                 </CardHeader>
                 <CardContent className="flex gap-2">
                   <Button asChild size="sm" variant="outline">
-                    <Link href="/availability">Availability →</Link>
+                    <Link href="/availability">
+                      Availability <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </Button>
                   <Button asChild size="sm" variant="outline">
-                    <Link href="/materials">Materials →</Link>
+                    <Link href="/materials">
+                      Materials <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useRef } from "react";
+import { Plus } from "lucide-react";
 import { addMaterial, type MaterialState } from "@/app/actions/materials";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +35,11 @@ export function MaterialForm() {
         <p className="text-sm text-red-700 sm:col-span-2" role="alert">{state.error}</p>
       ) : null}
       <Button type="submit" disabled={pending} className="sm:col-span-2 self-start">
-        {pending ? "Saving…" : "Add material"}
+        {pending ? "Saving…" : (
+          <>
+            <Plus className="h-4 w-4" /> Add material
+          </>
+        )}
       </Button>
     </form>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { ArrowRight } from "lucide-react";
 import { sendMessage } from "@/app/actions/network";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,7 +20,10 @@ export function MessageComposer({ conversationId }: { conversationId: string }) 
     >
       <input type="hidden" name="conversationId" value={conversationId} />
       <Textarea name="body" required maxLength={4000} placeholder="Write a message…" className="min-h-12 flex-1" />
-      <Button type="submit" className="self-end">Send</Button>
+      <Button type="submit" className="self-end">
+        Send
+        <ArrowRight className="h-4 w-4" />
+      </Button>
     </form>
   );
 }

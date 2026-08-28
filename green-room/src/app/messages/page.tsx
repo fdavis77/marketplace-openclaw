@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MessageCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/dal";
 import { relativeDays } from "@/lib/format";
@@ -16,11 +17,17 @@ export default async function MessagesPage() {
   if (!conversationIds.length) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-        <h1 className="font-display text-3xl">Messages</h1>
-        <p className="mt-4 text-muted">
-          No conversations yet. Find someone in the{" "}
-          <Link href="/network" className="font-medium text-accent hover:underline">network directory</Link> to start one.
-        </p>
+        <h1 className="flex items-center gap-2 font-display text-3xl">
+          <MessageCircle className="h-5 w-5 text-accent" />
+          Messages
+        </h1>
+        <div className="mt-8 flex flex-col items-center gap-2 py-6 text-center">
+          <MessageCircle className="h-10 w-10 text-muted" />
+          <p className="text-muted">
+            No conversations yet. Find someone in the{" "}
+            <Link href="/network" className="font-medium text-accent hover:underline">network directory</Link> to start one.
+          </p>
+        </div>
       </div>
     );
   }
@@ -47,7 +54,10 @@ export default async function MessagesPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-      <h1 className="font-display text-3xl">Messages</h1>
+      <h1 className="flex items-center gap-2 font-display text-3xl">
+        <MessageCircle className="h-5 w-5 text-accent" />
+        Messages
+      </h1>
       <div className="mt-6 flex flex-col gap-2">
         {conversations?.map((c) => {
           const other = otherByConversation.get(c.id);
