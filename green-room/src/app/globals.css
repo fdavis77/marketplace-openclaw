@@ -2,55 +2,56 @@
 @import "tailwindcss";
 
 :root {
-  /* Organic — cream paper, terracotta accent, sage as the sole secondary
-     color (reserved for "locked" / "booked" completed states). */
-  --background: #f5ead8;
-  --surface: #ebddc5;
-  --foreground: #201e1d;
-  --muted: #6b6154;
-  --muted-surface: #eee7db;
-  --border: color-mix(in srgb, #201e1d 16%, transparent);
+  /* Filmmaking Planner brand — white paper, black ink, gold accent. Sage
+     is the sole secondary color, reserved for "locked" / "booked"
+     completed states. */
+  --background: #ffffff;
+  --surface: color-mix(in srgb, #ecce83 26%, #ffffff);
+  --foreground: #000000;
+  --muted: #575757;
+  --muted-surface: #f7f7f7;
+  --border: #d1d1d1;
 
-  --accent: #c67139;
-  --accent-foreground: #f5ead8;
-  --accent-soft: #fff2eb;
+  --accent: #e3b848;
+  --accent-foreground: #141414;
+  --accent-soft: color-mix(in srgb, #ecce83 55%, #ffffff);
 
-  --accent-2: #7a8a5e;
-  --accent-2-foreground: #f5ead8;
-  --accent-2-soft: #f0fae1;
+  --accent-2: #65897f;
+  --accent-2-foreground: #ffffff;
+  --accent-2-soft: color-mix(in srgb, #95b1a9 45%, #ffffff);
 
   --radius: 1.1rem;
   --radius-pill: 999px;
 
-  --color-neutral-100: #f9f4ed;
-  --color-neutral-200: #eee7db;
-  --color-neutral-300: #dcd3c4;
-  --color-neutral-400: #c0b6a5;
-  --color-neutral-500: #a19786;
-  --color-neutral-600: #82796a;
-  --color-neutral-700: #645c50;
-  --color-neutral-800: #474238;
-  --color-neutral-900: #2e2b25;
+  --color-neutral-100: #f7f7f7;
+  --color-neutral-200: #efefef;
+  --color-neutral-300: #e6e6e6;
+  --color-neutral-400: #d1d1d1;
+  --color-neutral-500: #ababab;
+  --color-neutral-600: #7a7a7a;
+  --color-neutral-700: #575757;
+  --color-neutral-800: #2b2b2b;
+  --color-neutral-900: #000000;
 
-  --color-accent-100: #fff2eb;
-  --color-accent-200: #ffe1d0;
-  --color-accent-300: #ffc6a5;
-  --color-accent-400: #f6a06b;
-  --color-accent-500: #d67f48;
-  --color-accent-600: #b2622d;
-  --color-accent-700: #8c491a;
-  --color-accent-800: #643312;
-  --color-accent-900: #402310;
+  --color-accent-100: color-mix(in srgb, #ecce83 32%, #ffffff);
+  --color-accent-200: color-mix(in srgb, #ecce83 55%, #ffffff);
+  --color-accent-300: #ecce83;
+  --color-accent-400: #d3a633;
+  --color-accent-500: #e3b848;
+  --color-accent-600: #c99f2e;
+  --color-accent-700: #c2941e;
+  --color-accent-800: color-mix(in srgb, #c2941e 78%, #000000);
+  --color-accent-900: color-mix(in srgb, #c2941e 55%, #000000);
 
-  --color-accent-2-100: #f0fae1;
-  --color-accent-2-200: #e1eecc;
-  --color-accent-2-300: #ccdbb2;
-  --color-accent-2-400: #aebf92;
-  --color-accent-2-500: #8fa073;
-  --color-accent-2-600: #728157;
-  --color-accent-2-700: #56633f;
-  --color-accent-2-800: #3d472b;
-  --color-accent-2-900: #272e1b;
+  --color-accent-2-100: color-mix(in srgb, #95b1a9 25%, #ffffff);
+  --color-accent-2-200: color-mix(in srgb, #95b1a9 45%, #ffffff);
+  --color-accent-2-300: #95b1a9;
+  --color-accent-2-400: #7d9d94;
+  --color-accent-2-500: #65897f;
+  --color-accent-2-600: #557469;
+  --color-accent-2-700: color-mix(in srgb, #65897f 78%, #000000);
+  --color-accent-2-800: color-mix(in srgb, #65897f 58%, #000000);
+  --color-accent-2-900: color-mix(in srgb, #65897f 38%, #000000);
 
   --font-display: "Caprasimo", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Figtree", ui-sans-serif, system-ui, sans-serif;
