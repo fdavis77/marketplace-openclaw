@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+/*
+ * Ember & Aisle design tokens — the ONE place brand colour, type and motion
+ * timing live. Change a hex here and every screen follows.
+ * Text pairings are checked to WCAG AA (≥4.5:1). `gold` is decorative only
+ * (rules, dots, borders); use `gold-ink` when gold needs to be read as text.
+ */
+@theme {
+  /* Brand */
+  --color-ivory: #f8f3ea; /* warm ivory — page background */
+  --color-card: #fffdf8; /* raised surfaces */
+  --color-ink: #2a2522; /* ink charcoal — primary text */
+  --color-ink-soft: #6b5f55; /* secondary text */
+  --color-line: #e6dccb; /* hairlines */
+  --color-line-strong: #d4c6af;
+  --color-ember: #a8472a; /* terracotta / rust — primary action */
+  --color-ember-deep: #8a3a22;
+  --color-ember-wash: #f4e4da;
+  --color-gold: #b8955a; /* aged gold — decorative */
+  --color-gold-ink: #7a5a26; /* aged gold — readable as text */
+  --color-gold-wash: #f3e9d4;
+
+  /* Status (warm-shifted so they sit inside the palette) */
+  --color-over: #962f22;
+  --color-over-wash: #f7e2db;
+  --color-good: #4c6b48;
+  --color-good-wash: #e4ecdf;
+  --color-pending: #6b5f55;
+  --color-pending-wash: #eee7dc;
+
+  /* Type: serif for headings and names, sans for data */
+  --font-serif: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Motion vocabulary — mirrored in src/lib/motion.ts */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-page-in: page-in 200ms var(--ease-brand) both;
+
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--color-ivory);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    /* Cormorant defaults to old-style figures ("11" reads as "I I"); data needs lining ones. */
+    font-variant-numeric: lining-nums;
+  }
+  /* Numbers in data line up in columns */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ember);
+    outline-offset: 2px;
+  }
+  /* iOS zooms into inputs under 16px; keep them at 16px on phones. */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  @media (min-width: 640px) {
+    input,
+    select,
+    textarea {
+      font-size: 14px;
+    }
+  }
+}
+
+@utility transition-brand {
+  transition-property: color, background-color, border-color, opacity, transform, box-shadow;
+  transition-timing-function: var(--ease-brand);
+  transition-duration: 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
